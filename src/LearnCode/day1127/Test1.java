@@ -30,11 +30,11 @@ public class Test1 {
         String s7 = "H";
         String s8 = "ello";
         String s9 = s7 + s8;
-        System.out.println(s1 == s2);
-        System.out.println(s1 == s3);
-        System.out.println(s1 == s4);
-        System.out.println(s1 == s9);
-        System.out.println(s4 == s5);
-        System.out.println(s1 == s6);
+        System.out.println(s1 == s2);//t
+        System.out.println(s1 == s3);//t
+        System.out.println(s1 == s4);//f
+        System.out.println(s1 == s9);//t
+        System.out.println(s4 == s5);//f
+        System.out.println(s1 == s6);//t
     }
 }

@@ -11,7 +11,7 @@ public class HelloDate {
         System.out.println("Hello, it's: ");
         Date date= new Date();
         System.out.println(new Date());
-        System.out.println(date.getDay());
-        System.out.println(date.getHours());
+//        System.out.println(date.getDay());
+//        System.out.println(date.getHours());
     }
 }
