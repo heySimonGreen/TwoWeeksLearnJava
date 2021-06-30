@@ -1,5 +1,6 @@
 # java学习笔记 
-尚硅谷学习 数据结构、常用算法、常用设计模式、JVM
+尚硅谷学习 数据结构、常用算法、常用设计模式、JVM  
+[java面试1](https://mp.weixin.qq.com/s/-xFSHf7Gz3FUcafTJUIGWQ)
 
 ## 1.杂记  
 ### 1.1 新建的项目为什么会有out文件夹，而且颜色也不一样？  
@@ -47,4 +48,49 @@ jdk -> jre -> jvm
 #####jre(java runtime environment java运行环境)
 1. 包括Java虚拟机（jvm java virtual machine）和Java程序所需的核心类库等，如果想要运行一个开发好的Java程序，计算机中只需要安装jre即可。  
 **jdk = jre + 开发工具集（例如javac编译工具等）**  
-**jre = jvm + javaSE标准类库**   
+**jre = jvm + javaSE标准类库**  
+## 2. 代码执行顺序
+&ensp;&ensp;静态代码块-->构造代码块-->构造函数-->局部代码块-->同步代码块
+### 2.1 [构造方法，构造代码块](https://blog.csdn.net/Ximerr/article/details/115441000?utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7EBlogCommendFromMachineLearnPai2%7Edefault-1.control)  
+&ensp;&ensp;在执行构造方法前会执行构造代码块  
+### 2.2 在一个Java源文件中可以声明多个class，但是最多只能有一个类声明为public的  
+&ensp;&ensp;而且要求声明为public的类的类名必须与源文件名相同  
+&ensp;&ensp;要加public也只能加到和文件名同名的class前面  
+&ensp;&ensp;编译的过程，编译以后，会生成一个或多个字节码文件。字节码的文件名与Java源文件的类名相同  
+### 2.3 变量命名规范
+&ensp;&ensp;包名：所有字母小写  
+&ensp;&ensp;类名、接口名：多单词组成时，所有单词首字母大写，大驼峰  
+&ensp;&ensp;变量名、方法名：多单词组成时，第一个字母小写，后面单词首字母大写，小驼峰  
+&ensp;&ensp;常量命：所有单子字母大学，多个连接时中间用下划线链接  
+## 3 数据类型 8种基本数据类型+应用数据类型
+&ensp;&ensp;String时Java的数据类型，但不是基本数据类型，基本数据类型只有7种  
+### 3.1 基本数据类型
+    整型：byte 1 short 2 int 4 long 8
+    浮点型：float 4 double 8
+    字符型：char
+    布尔型：boolean 
+### 3.2 应用数据类型
+    类（class）
+    接口（interface）
+    数组（array） 
+### 整型：byte short int long
+| 类型 | 占用存储空间  | 表数范围 |
+|  ----  |  ----  |  ----  |
+| byte |1字节=8bit位|-128~127|
+| short |2字节|-2^15 ~ 2^15-1|
+| int  |4字节|-2^31 ~ 2^31-1|
+| long |8字节|-2^63 ~ 2^63-1|  
+&ensp;&ensp;声明long型变量必须以l或者L结尾
+
+### 浮点类型（表示带小数点的数值）：float double  
+|  类型   | 占用存储空间  | 表数范围 |
+|  ----  | ----  | ---- |
+|  单精度float  | 4字节 | -3.403E38 ~ 3.403E38 |
+| 双精度double  | 8字节 | -1.798E308 ~ 1.798E308 |  
+&ensp;&ensp;定义float变量时必须以f或者F结尾，double不需要
+
+&ensp;&ensp;float占四个字节，但比long8个字节存的数据范围还大，自然比int4个字节大哈，这是为什么？  
+&ensp;&ensp;因为float内存种表示数是用一部分表示数，另一部分表示10的多少次方，而int都是拿来表示数  
+### 字符型：char(1字符=2字节) char c1 = 'a'  
+&ensp;&ensp;定义char类型变量，通常使用一对'',内部只能写一个字符。  
+### 3.3 数据类型间的转换
