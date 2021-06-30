@@ -15,5 +15,10 @@ public class BitOperation {
         System.out.println("b << 1 ="+( b << 1 ));
         System.out.println("b >> 1 ="+( b >> 1 ));
         System.out.println("c >> 3 ="+( c >> 3 ));
+        //自动类型提升
+        byte bb = 2;
+        byte cc = 2;
+        //short i = bb + cc;//编译不通过
+//        System.out.println(i);
     }
 }
