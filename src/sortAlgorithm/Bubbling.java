@@ -12,7 +12,9 @@ package sortAlgorithm;
 public class Bubbling {
     //这里必须加static，在静态方法main方法上才可以用，java: 无法从静态上下文中引用非静态 方法 bubble(int[])
     static int[] bubble(int[] l){
-//        int[] l = {4,2,5,1,6,25,6,9};
+return getInts(l);
+    } private static int[] getInts(int[] l) {
+    //        int[] l = {4,2,5,1,6,25,6,9};
         for(int i = 0;i < l.length;i++){
             boolean flag = true;
             for(int j = 0;j < l.length-1-i;j++){
@@ -30,8 +32,7 @@ public class Bubbling {
         for(int i = 0;i<l.length;i++){
             System.out.println(l[i]);
         }
-        return l;
-    }
+        return l;}
     static int[] bubble2(int[] l){
         for(int i = 0;i < l.length;i++){
             for(int j = 0;j < l.length-1-i;j++){
