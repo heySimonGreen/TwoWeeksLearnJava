@@ -1060,7 +1060,111 @@ class SubClass extends SuperClass implements Java8Test,Java8Test2{
    > 类内可以定义属性、方法、构造器等  
    > 可以被final修饰，表示此类不能被继承。言外之意，不使用final，就可以被继承  
    > 可以被abstract修饰
+   
+```java
+package learncodeday15.stage20.innerclass;
+
+/**
+ * @author: chenwei
+ * @date: 2021/7/19 23:17
+ */
+public class InnerClassTest {
+    public static void main(String[] args){
+        //创建Dog实例(静态的成员内部类):
+        Person.Dog dog = new Person.Dog();
+        dog.show();
+        //创建Bird实例(非静态的成员内部类):
+//        Person.Dog dog = new Person.Dog();错误的，要有外部的实例才可以
+        Person p = new Person();
+        Person.Bird bird = p.new Bird();
+        bird.sing();
+
+        System.out.println("*******");
+        bird.display("黄鹂鸟");
+    }
+}
+class Person{
+    String name = "小明";
+    int age;
+    public void eat(){
+        System.out.println("人：吃饭");
+    }
+
+    //静态成员内部类
+
+    static class Dog{
+        String name;
+        int age;
+        public void show(){
+            System.out.println("卡拉 is a dog");
+            //静态加载块，不能调用eat()方法
+//            eat();
+        }
+    }
+    //非静态成员内部类
+
+    class Bird{
+        String name = "杜鹃";
+        public void sing(){
+
+            System.out.println("我是一只小小鸟");
+            eat();//这里省略了
+            Person.this.eat();
+        }
+        public void display(String name){
+            System.out.println(name);//方法的形参
+            System.out.println(this.name);//内部类的属性
+            System.out.println(Person.this.name);//外部类的属性
+        }
+    }
+}
+
+```
 4. 关注如下的3个问题  
    4.1. 如何实例化成员内部类的对象  
    4.2. 如何在成员内部类中区分调用外部类的结构  
    4.3. 开发中局部内部类的使用  
+```java
+package learncodeday15.stage20.innerclass;
+
+import learncodeday15.stage20.CompareObj;
+
+/**
+ * @author: chenwei
+ * @date: 2021/7/20 0:37
+ */
+public class InnerClassTest1 {
+    //开发中很少见
+
+    public void method(){
+        //局部内部类
+
+        class Aa{
+
+        }
+    }
+
+    //返回一个实现了Compareable接口的类的对象
+
+    public CompareObj getCompareable(){
+        //创建一个实现了Compareable接口的类：局部内部类
+        //方式一：有名
+
+//        class MyCompareable implements CompareObj{
+//            @Override
+//            public int compareTo(Object o) {
+//                return 0;
+//            }
+//        }
+//        return new MyCompareable();
+        //方式二无名
+
+        return new CompareObj() {
+            @Override
+            public int compareTo(Object o) {
+                return 0;
+            }
+        };
+    }
+}
+```   
