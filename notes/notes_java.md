@@ -259,7 +259,14 @@ char c = ss.charAt(0)
 如果参数是基本数据类型，此时实参赋给形参的是真是存储的数据值。  
 如果参数是引用数据类型，此时实参赋给形参存储数据的地址值。  
 ### 11.封装  
-#### 11.3 封装性的体现
+#### 11.3 封装性的体现  
+|访问修饰符|同一个类|同包|不同包，子类|不同包，非子类|
+| ---- | ---- | ---- | ---- | ---- |
+| private |yes||||
+|缺省|yes|yes|||
+|protected|yes|yes|yes||
+|public|yes|yes|yes|yes|
+
 1. Java规定的四种权限（从大到小）：private、缺省、protected、public  
 2. 4种权限可以用来修饰类及类的内部结构：属性、方法、构造器、内部类    
 3. 具体的，4种权限都可以用来修饰类的内部结构：属性、方法、构造器、内部类  
@@ -993,3 +1000,67 @@ class CarFactory{
 ```   
 3. 工厂方法模式  
 4. 抽象工厂模式
+
+### java面试题  
+#### 1. [collection和collections的区别](https://www.cnblogs.com/cathyqq/p/5279859.html)  
+### java8接口的新特性  在接口中，除了jdk7中定义全局常量(static final默认省略)和抽象方法(abstract默认省略)之外，还可以定义静态方法和默认方法  
+```java
+package learncodeday15.stage20;
+
+/**
+ * @author: chenwei
+ * @date: 2021/7/19 19:57
+ */
+public class Java8 {
+    public static void main(String[] args){
+        SubClass subClass = new SubClass();
+        //知识点1：接口中定义的静态方法，只能通过接口来调用
+        //subClass.method1();
+        //知识点2：通过实现类的对象，可以调用接口中默认的方法
+        //如果实现类重写了接口中的默认方法，调用时，任然调用的是重写以后的方法
+        subClass.method2();
+        //知识点3：如果子类（实现类）,继承的父类和实现的接口中声明了同名同参数的方法，那么子类在
+        //没有重写此方法的情况下，默认调用的是父类中的同名同参数的方法。 ---> 类优先原则
+
+        //知识点4：如果实现类实现了多个接口，而这多个接口中定义了同名同参数的默认方法，
+        //那么在实现类没有重写此方法的情况下，报错。--->接口冲突。
+        //这就需要我们必须在实现类中重写此方法
+        subClass.method3();
+    }
+}
+class SubClass extends SuperClass implements Java8Test,Java8Test2{
+    @Override
+    public void method2() {
+        System.out.println("$$$$$$$$");
+    }
+
+    @Override
+    public void method3() {
+        System.out.println("实现类实现多个接口，接口中的方法又相同时必须重写");
+    }
+    //知识点5：如何在子类（或实现类）的方法中调用父类、接口中被重写的方法
+    public void myMethod(){
+        method3();//调用自己定义的重写的方法
+        super.method3();//调用父类中声明的
+        Java8Test.super.method3();
+        Java8Test2.super.method3();
+    }
+}
+```  
+### 类的内部成员之五：内部类  
+1. Java允许将一个类A声明在另一个类B中，则类A就是内部类，类称为外部类  
+2. 内部类的分类(类比变量，成员变量和属性、局部变量): 成员内部类(静态、非静态) VS局部内部类(方法内、代码块内、构造器内)  
+[成员变量和属性的区别](https://blog.csdn.net/sinat_34137390/article/details/82149259)  
+3. 成员内部类：  
+   一方面，作为内部类的成员：  
+   > 调用外部类的结构  
+   > 可以被static修饰  
+   > 可以被4种不同的权限修饰  
+   另一方面，作为一个类：  
+   > 类内可以定义属性、方法、构造器等  
+   > 可以被final修饰，表示此类不能被继承。言外之意，不使用final，就可以被继承  
+   > 可以被abstract修饰
+4. 关注如下的3个问题  
+   4.1. 如何实例化成员内部类的对象  
+   4.2. 如何在成员内部类中区分调用外部类的结构  
+   4.3. 开发中局部内部类的使用  
