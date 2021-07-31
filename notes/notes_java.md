@@ -1,7 +1,9 @@
 # java学习笔记 学习springboot之前需要学习SSM，学习springCloud
 ## 常用快捷键  
 1. 调整格式全选后ctr+alt+l  
-2. 在要输出的变量后输.soutv，就可以了
+2. 在要输出的变量后输.soutv，就可以了  
+3. ctrl+alt+t try-catch快捷键  
+4. alt +enter 快速创间对象快捷键
 尚硅谷学习 数据结构、常用算法、常用设计模式、JVM  
 [java面试1](https://mp.weixin.qq.com/s/-xFSHf7Gz3FUcafTJUIGWQ)
 
@@ -585,6 +587,74 @@ int num1 = 10;
 > 好处：饿汉式是线程安全的  
 >懒汉式：好处：延迟对象的创建。  
 >目前的写法坏处：线程不安全。 （到多线程内容时，再修改）  
+```java
+package learncodeday14;
+
+/**
+ * @author: chenwei
+ * @date: 2021/7/15 17:41
+ * 饿汉式单例模式
+ */
+public class Singleton {
+    public static void main(String[] args){
+        Bank bank = Bank.getInstance();
+        Bank bank2 = Bank.getInstance();
+        System.out.println(bank == bank2);
+    }
+}
+class Bank{
+    //1.私有化类的构造器
+
+    private Bank(){
+
+    }
+    //2.内部创建类的对象
+    //3.要求此对象也必须声明为静态的
+
+    private static Bank instance = new Bank();
+
+    //3.提供公共的静态方法，返回类的对象
+
+    public static Bank getInstance(){
+        return instance;
+    }
+}
+```
+```java
+package learncodeday14;
+
+/**
+ * @author: chenwei
+ * @date: 2021/7/15 17:57
+ * 懒汉式
+ */
+public class Singleton2 {
+    public static void main(String[] args){
+        Order order = Order.getInstance();
+        Order order2 = Order.getInstance();
+        System.out.println(order == order2);
+    }
+}
+class Order{
+    //1.私有化构造器
+
+     private Order(){
+     }
+     //2.声明当前类对象，没有初始化。懒。
+    //4.此对象也必须声明为static
+
+     private static Order instance = null;
+
+     //3.声明public、static的返回当前类对象的方法
+
+     public static Order getInstance(){
+         if (instance == null){
+             instance = new Order();
+         }
+         return instance;
+     }
+}
+```
 
 ### 29 main()方法的使用  
 1.main()方法作为程序的入口  
@@ -751,6 +821,19 @@ interface Attackable{
 ```
 
 > 面试题：抽象类与接口有哪些异同？  
+> 接口和抽象类的区别：
+>>（1）抽象类可以有构造方法，接口中不能有构造方法。  
+>>（2）抽象类中可以有普通成员变量，接口中没有普通成员变量  
+>>（3）抽象类中可以包含静态方法，接口中不能包含静态方法  
+>>（4）一个类可以实现多个接口，但只能继承一个抽象类。  
+>>（5）接口可以被多重实现，抽象类只能被单一继承  
+>>（6）如果抽象类实现接口，则可以把接口中方法映射到抽象类中作为抽象方法而不必实现，而在抽象类的子类中实现接口中方法  
+> 
+> 接口和抽象类的相同点：  
+>> (1) 都可以被继承  
+>> (2) 都不能被实例化  
+>> (3) 都可以包含方法声明  
+>> (4) 派生类必须实现未实现的方法
 
 ### 代理模式
 ```java
@@ -1121,7 +1204,7 @@ class Person{
 
 ```
 4. 关注如下的3个问题  
-   4.1. 如何实例化成员内部类的对象  
+   4.1. ===  
    4.2. 如何在成员内部类中区分调用外部类的结构  
    4.3. 开发中局部内部类的使用  
 ```java
@@ -1168,3 +1251,582 @@ public class InnerClassTest1 {
     }
 }
 ```   
+### day16每日一题  
+1. abstract能修饰哪些结构？修饰后，有哪些特点？final、static呢？  
+2. 接口是否能继承接口？抽象类是否能实现(implements)接口？抽象类是否能继承非抽象的类？  
+3. 声明抽象类，并包含抽象方法。测试类中创建一个继承抽象类的匿名子类的对象  
+4. 抽象类和接口有哪些共同点和区别  
+
+### 异常
+1. finally 是可选的。  
+2. 使用try将可能出现异常代码包装起来，在执行过程中，一丹出现异常，
+   就会生成一个对应异常类的对象，根据此对象的类型，去catch中进行匹配。
+3. 一旦try中的异常对象匹配到某一个catch时，就进入catch中进行异常的处理。
+   一旦处理完成，就跳出当前的try-catch结构(在没有写finally的情况)。继续执行其后的代码。  
+4. catch中的异常类型如果没有子父类关系，则谁声明在上，谁声明在下无所谓。
+   catch中的异常类型如果满足子父类关系，则要求子类一定声明在父类的上面。否则，报错  
+5. 通常的异常对象处理的方式1.String getMessage() 2.printStackTrace()  
+6. 在try结构中声明的变量，在出了try结构以后，就不能再被调用  
+
+>体会：1使用try-catch-finally处理编译时异常，使得程序在编程时就不报错，但是运行时仍可能报错
+ 相当于我们使用try-catch-finally将一个编译时可能出现的异常，延迟到运行时出现。  
+  体会：2开发中，由于运行时异常比较常见，所以我们通常就不针对运行时异常编写try-catch-finally了。
+  针对于编译时异常，我们说一定要考虑异常的处理。
+ 
+  异常处理的方式二：throws+异常类型  
+  1. throws + 异常类型 卸载方法的声明出。指明此方法执行时，可能会抛出的异常类型。
+  一旦当方法执行时，出现异常，仍会在异常代码处生成一个异常类的对象，此对象满足throw类型时
+  就会被抛出。异常代码后续的代码，就不会再执行！  
+  2. 体会：try-catch-finally:真正的将异常处理掉了。
+  throws的方式只是将异常抛给了方法的调用者。并没有真正将异常处理掉。
+  3. 开发中如何选择使用try-catch-finally，还是使用throws?  
+  3.1.1 如果父类中被重写的方法throws方式处理异常，则子类重写的方法也不能使用throws，
+  意味着如果子类重写的方法中有异常，必须使用try-catch-finally方式处理   
+  3.2.2：执行的方法a中，先后又调用了另外的几个方法，这几个方法是递进关系执行的
+  我们建议这几个方法使用throws的方式进行处理。而执行的方法a可以考虑使用try-catch-finally的方式进行处理。  
+
+### 如何自定义一个异常类？
+1. 继承于现有的异常结构，RuntimeException,Exception  
+2. 提供全局常量：serialVersionUID  
+3. 提供重载的构造器   
+```java
+class Ecdef extends RuntimeException{
+    static final long serialVersionUID = -7034897190745766939L;
+    public Ecdef(String message) {
+        super(message);
+    }
+    public Ecdef() {
+    }
+}
+```
+
+### 面试题，throws(声明异常)和throw(抛出异常)的区别是什么？(上游排污，下游治污)  
+
+## 项目3 
+### super只能调用父类中的指定方法，但想调用父类的父类，甚至父类的父类的父类时，并且子类多次需要调用时。  
+规范的解决办法就是在父类的父类中重写写一份，给子类调用，而不是super.的方式调用
+```java
+    public Programmer(int id, String  name, int age, double salary, Equipment equipment) {
+        super(id, name, age, salary);
+        this.equipment = equipment;
+        }
+
+public Programmer() {
+        }
+```  
+## 多线程  
+### 程序、进程、线程的理解   
+1. 程序：为完成特定任务，用某种编程语言编写的一系列指令的集合。即一段静态代码，静态对象。  
+2. 进程：是程序的一次执行过程，或是正在运行的一个程序。  
+3. 线程：进程可进一步细化为线程，是一个程序内部的一条执行路径
+   （线程作为调度和执行的单位，每个线程拥有独立的运行栈和程序计数器，线程的切换的开销小）
+   （若一个进程同一时间并行执行多个线程，就是支持多线程的）
+   （一个进程中的多个线程共享相同的内存单元/内存地址空间->他们从同一堆中分配对象，可以访问相同的变量和对象。这就使得线程间通信更简便、高效。但多个线程操作共享的系统资源可能就会带来安全隐患）  
+### 并行、并发  
+1. 并行：多个cpu同时执行多个任务  
+2. 并发：一个cpu（采用时间片）同时执行多个任务。比如秒杀、多个人同时做一件事  
+### 何时需要多线程  
+1. 程序需要同时执行两个或多个任务时。 
+2. 程序需要实现一些需要等待的任务时，如用户输入、文件读写操作、网络操作、搜索等。
+3. 需要一些后台运行的程序时。
+```java
+package day18thread;
+
+import org.junit.Test;
+
+/**
+ * @author: chenwei
+ * @date: 2021/7/30 0:32
+ * @description:多线程的创建方式：方式一：继承于Thread类
+ * 1.创建一个继承于Thread类的子类
+ * 2.重写Thread类的run() --> 将此线执行的操作声明在run中
+ * 3.创建Thread类的子类对象
+ * 4.通过此对象调用start()
+ * 例子，编译100以内的所有偶数
+ */
+public class ThreadTest extends Thread{//1.继承Thread类
+    //2重写run方法
+    @Override
+    public void run() {
+        for (int i=0;i<=100;i++){
+            if (i%2==0){
+                System.out.println(i + Thread.currentThread().getName());
+            }
+        }
+    }
+    public static void main(String[] args){
+        //3.创建Thread类的子类对象
+        ThreadTest threadTest = new ThreadTest();
+        //4.通过此对象调用start，启用当前线程，调用当前线程的run
+        threadTest.start();
+        //问题一：我们不能通过run()的方式来启动线程
+        //threadTest.run();
+        //问题二：再启动一个线程，遍历100以内的偶数。不可以让已经start()的线程去执行。会报IllegalThread
+        //threadTest.start();
+
+        //如下操作仍然是在main线程中执行
+        for (int i=0;i<=100;i++){
+            if (i%2==0){
+                System.out.println(i+"ooooooooooooooooo" +Thread.currentThread().getName());
+            }
+        }
+    }
+}
+
+```
+
+```java
+package day18thread;
+
+/**
+ * @author: chenwei
+ * @date: 2021/7/30 15:21
+ * @description: 创建遍历一百以内的偶数，和创建100以内的奇数两个线程
+ */
+public class ThreadTestHomeWork1 {
+    public static void main(String[] args){
+        //通过构造函数方式设置线程名字
+        TheadTestOuShu theadTestOuShu = new TheadTestOuShu("theadTestOuShu");
+        TheadTestJiShu theadTestJiShu = new TheadTestJiShu();
+        theadTestJiShu.setPriority(Thread.MIN_PRIORITY);
+        theadTestOuShu.setPriority(Thread.MIN_PRIORITY);
+
+        /**
+         * 测试Thread中的常用方法
+         * 1. start() 启动当前线程；调用当前线程的run
+         * 2. run() 通常需要重写Thread类中的run方法，将创建的线程要执行的操作声明在此方法中
+         * 3. currentThread() 静态方法，返回执行当前代码的线程
+         * 4. getName() 获取当前线程的名字
+         * 5. setName() 设置当前线程的名字
+         * 设置线程的名字有两种方式，1是通过setName()方式 2是通过创建线程时的构造方法
+         * 6. yield()释放当前cpu执行权
+         * 7. 在线程a种调用线程b的join()，此时线程a进入阻塞状态，知道线程b完全执行完以后，线程a才结束阻塞状态
+         * 8. stop() 此方法已过时，当执行此方法，强制结束当前线程
+         * 9. sleep(long milliime) 让当前线程睡眠millitime毫秒，既是阻塞millimite毫秒，在指定的millitime内，当前线程时阻塞状态
+         * 10. isAlive() 判断当前线程是否存活
+         *
+         * 线程的优先级
+         * 1.
+         * MIN_PRIORITY :1
+         * MAX_PRIORITY : 10
+         * NORM_PRIORITY : 5  -->默认优先级
+         * 2. 如何获取和设置当前线程的优先级
+         * setPriority()
+         * getPriority()
+         * 说明:高优先级的线程要抢占低优先级线程的cpu执行权。但是只是从概率上讲，高优先级的线程高概率的情况下被执行。
+         *      并不意味着只有当高优先级的线程执行完以后，低优先级的线程才执行。
+         *
+        * */
+
+        theadTestJiShu.setName("线程-奇数");
+        Thread.currentThread().setName("main线程");
+        Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+        theadTestJiShu.start();
+        theadTestOuShu.start();
+        for (int i=0;i<=100;i++){
+            System.out.println(i + Thread.currentThread().getName() + " "+Thread.currentThread().getPriority());
+            if (i==20){
+                try {
+                    theadTestOuShu.join();
+                    System.out.println("到偶数了 theadTestOuShu.join();");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        System.out.println(theadTestOuShu.isAlive());
+
+        //如果这个方法只使用一次，有经验的程序员都是采用创建匿名子类的方式
+        //创建Thread类的匿名子类对象
+        new Thread(){
+            @Override
+            public void run() {
+                for (int i=0;i<=100;i++){
+                    if (i%2 != 0){
+                        System.out.println(i + Thread.currentThread().getName() +  " "+Thread.currentThread().getPriority());
+                    }
+                }
+            }
+        }.start();
+        new Thread(){
+            @Override
+            public void run() {
+                for (int i=0;i<=100;i++){
+                    if (i%2 == 0){
+                        System.out.println(i + Thread.currentThread().getName() +  " "+Thread.currentThread().getPriority());
+                    }
+                }
+            }
+        }.start();
+
+    }
+}
+class TheadTestJiShu extends Thread{
+    @Override
+    public void run() {
+        for (int i=0;i<=100;i++){
+            if (i%2 != 0){
+                System.out.println(i + Thread.currentThread().getName() +  " "+Thread.currentThread().getPriority());
+            }
+            if (i%3 == 0){
+                yield();
+            }
+        }
+    }
+}
+class TheadTestOuShu extends Thread{
+    @Override
+    public void run() {
+        for (int i=0;i<=100;i++){
+//            if (i%2 == 0){
+//                try {
+//                    sleep(10);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                System.out.println(i + Thread.currentThread().getName() + Thread.currentThread().getPriority());
+//            }
+            System.out.println(i + Thread.currentThread().getName() +  " "+Thread.currentThread().getPriority());
+        }
+    }
+
+    //通过构造函数方式设置线程名字
+    public TheadTestOuShu(String name) {
+        super(name);
+    }
+}
+```
+```java
+package day18thread;
+
+/**
+ * @author: chenwei
+ * @date: 2021/7/30 18:43
+ * 创建多线程的方式二：实现Runnable接口
+ * 1. 创建一个实现了Runnel接口的类
+ * 2. 实现类去实现Runnal中的抽象方法:run
+ * 3.创建实现类的对象
+ * 4. 将此对象作为参数传递到Thread类的构造器中，创建Thread类的对象
+ * 5. 通过Thread类的对象调用start
+ * 6. 比较创建线程的两种方式。
+ *     开发中：优先选择：实现Runnable接口的方式
+ *     原因： 1.实现的方式没有类的单继承的局限性 2.实现的方式更适合处理多个线程有共享数据的情况
+ *     联系：public class Thread implements Runnable 相同点：两种方式都需要重写run，将线程要执行的逻辑声明在run中
+ *
+ * 例子：创建三个窗口卖票，总票数为100张，使用Runnable接口的方式
+ * 1. 问题：卖票过程中，出现了重票、错票 -->出现了线程安全问题
+ * 2. 问题出现的原因：当某个线程操作车票的过程中，尚未操作完成时，其他线程参与进来，也操作车票
+ * 3. 如何解决：当一个线程在操作ticket的时候，其他线程不能参与进来。直到线程a操作完ticket时，
+ *            其他线程才可以开始操作ticket。这种情况即使线程a出现了阻塞，也不能被改变。
+ * 4. 在Java中，我们通过同步机制，来解决线程的安全问题
+ *    说明：在继承Thread类创建多线程的方式中，慎用this充当同步监视器，考虑使用当前类从当
+ *
+ * 方法一：同步代码块
+ * synchronized(同步监视器){需要被同步的代码}
+ * 说明： 1. 操作共享数据的代码，即为需要被同步的代码，
+ *       2. 共享数据：多个线程共同操作的变量。比如，ticket就是
+ *       3. 同步监视器：俗称锁。任何一个类的的对象，都可以充当锁。要求多个线程必须要用同一把锁。
+ *       补充：在实现Runnable接口创建多线程的方式中，我们可以考虑使用this充当同步监视器
+ *  方法二：同步方法
+ *
+ *   5.同步的方法，解决了线程的安全问题。--好处
+ *     操作同步代码时，只能有一个线程参与，其他线程等待。相当于是一个单线程的过程，效率低。
+ *
+ *
+ */
+public class ThreadTestTicket {
+  public static void main(String[] args) {
+//    Windows windows1 = new Windows("windows1");
+//    Windows windows2 = new Windows("windows2");
+//    Windows windows3 = new Windows("windows3");
+//    windows1.start();
+//    windows2.start();
+//    windows3.start();
+
+        MyThread myThread = new MyThread();
+        Thread thread1 = new Thread(myThread);
+        thread1.setName("线程1");
+        Thread thread2 = new Thread(myThread);
+        thread2.setName("线程2");
+        Thread thread3 = new Thread(myThread);
+        thread3.setName("线程3");
+        thread1.start();
+        thread2.start();
+        thread3.start();
+  }
+}
+
+class Windows extends Thread {
+  private static int ticket = 100;
+  private static Object object = new Object();
+
+  public Windows(String name) {
+    super(name);
+  }
+
+  @Override
+  public void run() {
+    while (true) {
+      synchronized (object) {
+        if (ticket > 0) {
+          try {
+            Thread.sleep(10);
+          } catch (InterruptedException e) {
+            e.printStackTrace();
+          }
+          System.out.println(getName() + " 还有票,票号为：" + ticket);
+          ticket--;
+        }else {
+          break;
+        }
+      }
+    }
+  }
+}
+
+class MyThread implements Runnable {
+  private int ticket = 100;
+
+  @Override
+  public void run() {
+    while (true) {
+      synchronized (this){
+        if (ticket>0){
+          System.out.println("还有票 " + Thread.currentThread().getName() + " 剩余 ： " + ticket);
+          ticket--;
+        }else {
+          break;
+        }
+      }
+    }
+  }
+}
+```
+```java
+package day18thread;
+
+/**
+ * @author: chenwei
+ * @date: 2021/7/31 1:43
+ */
+public class ThreadTestTicket2 {
+  public static void main(String[] args) {
+    WindowsTicket windowsTicket = new WindowsTicket();
+    Thread thread1 = new Thread(windowsTicket);
+    Thread thread2 = new Thread(windowsTicket);
+    Thread thread3 = new Thread(windowsTicket);
+    thread1.setName("窗口1 ");
+    thread2.setName("窗口2 ");
+    thread3.setName("窗口3 ");
+    thread1.start();
+    thread2.start();
+    thread3.start();
+  }
+}
+
+class WindowsTicket implements Runnable {
+  private int ticket = 1000;
+  Object object = new Object();
+
+  @Override
+  public void run() {
+    while (true) {
+      synchronized (object) {
+        if (ticket > 0) {
+          System.out.println(Thread.currentThread().getName() + " 剩余： " + ticket);
+          ticket--;
+        }else {
+            break;
+        }
+      }
+    }
+  }
+}
+```
+```java
+package day18thread;
+
+/**
+ * @author: chenwei
+ * @date: 2021/7/31 17:08
+ * @description : 使用同步方法解决实现Runnable接口的线程安全问题
+ * 关于同步方法的总结：
+ * 1. 同步方法仍然涉及到同步监视器，只是不需要我们显式的声明。
+ * 2. 非静态的同步方法，同步监视器是:this
+ *     静态的同步方法，同步监视器是：当前类本身
+ */
+public class WindowTest3 {
+  public static void main(String[] args) {
+      //实现Runnable接口的线程安全问题
+//      ThreadTest3 threadTest3 = new ThreadTest3();
+//      Thread thread1 = new Thread(threadTest3);
+//      Thread thread2 = new Thread(threadTest3);
+//      Thread thread3 = new Thread(threadTest3);
+//      thread1.start();
+//      thread2.start();
+//      thread3.start();
+
+      ThreadTest4 threadTest41 = new ThreadTest4();
+      threadTest41.start();
+      ThreadTest4 threadTest42 = new ThreadTest4();
+      threadTest42.start();
+      ThreadTest4 threadTest43 = new ThreadTest4();
+      threadTest43.start();
+
+
+  }
+}
+class ThreadTest3 implements Runnable{
+    private int ticket = 100;
+    @Override
+    public void run() {
+        while (true){
+            method();
+        }
+    }
+    private synchronized void method(){
+        if (ticket>0){
+            System.out.println("还有票： " + ticket + " " +Thread.currentThread().getName());
+            ticket--;
+        }
+    }
+}
+class ThreadTest4 extends Thread{
+    private static int ticket = 100;
+    @Override
+    public void run() {
+        while (true){
+            method();
+        }
+    }
+    private static synchronized void method(){
+//    private synchronized void method(){ 此种是错误的s
+        if (ticket>0){
+            try {
+                sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("还有票： " + ticket + " " +Thread.currentThread().getName());
+            ticket--;
+        }
+    }
+}
+```
+### synchronized和lock的异同
+```java
+package day18thread;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * @author: chenwei
+ * @date: 2021/8/1 0:37
+ * @description: 解决线程安全的方式三：Lock锁 ---jdk 5.0新增
+ * 1. 面试题：synchronized和lock的异同
+ * 相同：两者都可以解决线程安全问题
+ * 不同：synchronized机制在执行完相应的同步代码以后，自动释放同步监视器
+ *       lock需要手动的启动同步(lock())，同时结束同步也需要手动实现(unlock())
+ * 2. 优先使用顺序：lock->同步代码块（已经进入了方法体，分配了相应资源）->同步方法（在方法体之外）
+ *
+ * 面试题：如何解决线程安全问题？有几种方式？
+ */
+public class ThreadTestVideo13 {
+  public static void main(String[] args) {
+      WindowsTickets windowsTickets = new WindowsTickets();
+      Thread thread1 = new Thread(windowsTickets);
+      Thread thread2 = new Thread(windowsTickets);
+      Thread thread3 = new Thread(windowsTickets);
+      thread1.start();
+      thread2.start();
+      thread3.start();
+  }
+}
+class WindowsTickets implements Runnable{
+    private int ticket =100;
+    ReentrantLock reentrantLock = new ReentrantLock();
+
+    @Override
+    public void run() {
+        while (true){
+            try {
+                //1. 上锁
+                reentrantLock.lock();
+                if (ticket>0){
+                    System.out.println("剩余票数为： " + ticket + Thread.currentThread().getName());
+                    ticket--;
+                }else {
+                    break;
+                }
+            } finally {
+                //2.调用解锁方法解锁
+                reentrantLock.unlock();
+
+            }
+        }
+    }
+}
+```
+### 练习题
+```java
+package day18thread;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * @author: chenwei
+ * @date: 2021/8/1 1:25
+ * @description: 描述
+ */
+public class ThreadHomeworkVideo142 {
+  public static void main(String[] args) {
+      Account account = new Account(10000);
+      Customer c1 = new Customer(account);
+      Customer c2 = new Customer(account);
+      c1.setName("c1");
+      c2.setName("c2");
+      c1.start();
+      c2.start();
+
+  }
+}
+class Account{
+    private double balance;
+    public Account(double balance){
+        this.balance = balance;
+    }
+    public void deposit(double amt){
+//    public synchronized void deposit(double amt){ 方法一 这里的this指定是？一定要注意不能是多个 这是使用的同一个this  account
+        if (amt>0){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            balance = balance + amt;
+            System.out.println("deposite successful balance is " + balance +" " + Thread.currentThread().getName());
+        }
+    }
+}
+class Customer extends Thread{
+    private Account account;
+    public Customer(Account account){
+        this.account = account;
+    }
+
+    //方式二 这里式用继承Thread类,所以创建的ReenTrantLock一定要加Static
+    static ReentrantLock r = new ReentrantLock();
+    @Override
+    public void run() {
+        for (int i=0;i<3;i++){
+
+            try {
+                r.lock();
+                account.deposit(1000);
+            } finally {
+                r.unlock();
+            }
+        }
+    }
+}
+```
