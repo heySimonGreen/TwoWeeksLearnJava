@@ -1,4 +1,4 @@
-package day20usualclass1;
+package day20usualclass1.review;
 
 /**
  * @author: chenwei

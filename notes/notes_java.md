@@ -2041,3 +2041,112 @@ javap -c ExamTest > ExamTest.txt
    待调用notify()/notifyAll()唤醒指定的线程或者所有线程，
    才会进入锁池，不再次获得对象锁才会进入运行状态；  
    
+## day20 常用类  
+### 字符串相关的类  
+#### String 字符串，使用一对""引起来表示。  
+1. String类声明为final的，不可被继承，就是说该有的方法都写好了，不需要你去拓展  
+2. String实现了Serializable接口，表示字符串是可以被序列化的。String实现了Comparable接口，表示String可以比较大小。  
+3. String内部定义了final char[] value 用于存放字符串数据  
+4. String 代表不可变的字符序列。简称不可变性。  
+   4.1 当对字符串重新赋值时，需要重写内存区域赋值，不能使用原有的value进行赋值。  
+   4.2 当对现有的字符串进行链接操作时，也需要重写指定内存区域赋值，不能使用原有的value进行赋值。  
+   4.3 当调用String的replace方法修改指定的字符或者字符串时，也需要重写指定内存区域赋值，不能使用原有的value进行赋值。  
+5. 通过子面量的方式(区别于new)给一个字符串赋值，此时的字符串值声明在方法区的字符串常量池中  
+6. 字符串常量池中是不会存储相同内容的字符串的  
+#### 字符串的创建  
+1. 通过字面量的方式  
+2. 通过new + 构造器的方式
+> 面试题：String s4 = new String("JavaEE");方式创建对象，在内存中创建了几个对象？  
+> 答：两个，一个是堆空间new的结构，一个是char[]对应的常量池中的数据："JavaEE"   
+```java
+String s1 = "abc";
+String s2 = new String();
+String s3 = new String(String original);
+String s4 = new String(char value[]);
+String s5 = new String(char value[], int offset, int count);
+```
+```java
+public class StringTest2 {
+  public static void main(String[] args) {
+    //通过字面量定义的方式：此时s1s和2的数据JavaEE声明在方法区中的字符串常量池中。
+    String s1 = "JavaEE";
+    String s2 = "JavaEE";
+    //通过new + 构造器的方式:此时s3和s4的保存的地值，是数据在堆空间中开辟空间以后对应的地址值
+    String s3 = new String("JavaEE");
+    String s4 = new String("JavaEE");
+    System.out.println(s1 ==s2);
+    System.out.println(s1 ==s3);
+    System.out.println(s1 ==s4);
+    System.out.println(s3 ==s4);
+    //需要能画内存图
+    Person person1 = new Person("chenwei",24);
+    Person person2 = new Person("chenwei",24);
+    System.out.println(person1.name.equals(person2.name));//重写写过equals比较的是值是否相等
+    System.out.println(person1.name==person2.name);
+    person1.name = "hei";
+    System.out.println(person1.name==person2.name);
+  }
+}
+class Person{
+  public String name;
+  public int age;
+  public Person(String name, int age) {
+    this.name = name;
+    this.age = age;
+  }
+}
+```
+#### 两个结论
+1. 常量和常量的拼接结果在常量池。且常量池中不会存在相同内容的常量  
+2. 只要其中一个有变量，结果就在堆空间中，和new一样  
+3. String调用intern方法时，强制要求返回的值一定要是在常量池中去声明  
+```java
+public class StringTest3 {
+  public static void main(String[] args) {
+    String s1 = "javaee";
+    String s2 = "hadoop";
+    String s3 = "javaeehadoop";
+    String s4 = "javaee" + "hadoop";
+    String s5 = s1 + "hadoop";
+    String s6 = "javaee"+ s2;
+    String s7 = s1 + s2;
+    String s8 = (s1 + s2).intern();//放回值得到的s8使用的是常量池中已经存在的"javahadoop"
+    System.out.println(s3 == s4);
+    System.out.println(s3 == s5);
+    System.out.println(s3 == s6);
+    System.out.println(s3 == s7);
+    System.out.println(s5 == s6);
+    System.out.println(s5 == s7);
+    System.out.println(s6 == s7);
+    System.out.println(s3 == s8);
+  }
+}
+```
+#### 一道java关于String不可变性和值传递机制的面试题  
+> 基本数据类型传递的是数据  
+> 引用数据类型传递的是地址值(不要记引用类型把地址传过去，把里面的值该了原来的也改了，这个是错的，比如这个String不可改)
+```java
+/**
+ * @author: chenwei
+ * @date: 2021/8/9 2:25
+ * @description: 这是一道面试题 String的不可变性和值传递机制考察
+ * 基本数据类型传递的是数据
+ * 引用数据类型传递的是地址值(不要记引用类型把地址传过去，把里面的值该了原来的也改了，这个是错的，比如这个String不可改)
+ */
+public class StringTest4 {
+    String str = new String("good");
+    char[] ch = {'t','e','s','t'};
+    public void exchange(String str , char[] ch){
+        str = "test ok";
+        ch[0] = 'b';
+    }
+  public static void main(String[] args) {
+        StringTest4 ex = new StringTest4();
+        ex.exchange(ex.str,ex.ch);
+        System.out.println(ex.str);
+        System.out.println(ex.ch);
+  }
+}
+```
+
+#### 其他练习 [java实现单循环链表](https://www.cnblogs.com/sang-bit/p/11610181.html)  
