@@ -15,18 +15,15 @@ package day20usualclass1.test;
  */
 public class StringMethodTest3 {
   public static void main(String[] args) {
-    //
   String str1 = "重庆市黔江区五里乡重庆";
   String str2 = str1.replace("庆","喜");
   System.out.println(str1);
   System.out.println(str2);
   String str3 = str1.replace("重庆","上海");
   System.out.println(str3);
-
   String str4 = "534hello52world25235java23542mysql26565";
   String string = str4.replaceAll("\\d+",",");
   System.out.println(string.replaceAll("^,|,$",""));
-
   String str5 = "13235325324534";
   boolean match = str5.matches("\\d+");
   System.out.println(match);
@@ -40,7 +37,6 @@ public class StringMethodTest3 {
   for (int i=0;i<strs.length;i++){
     System.out.println(strs[i]);
   }
-
     String str7 = "hello.world.java.mysql";
   String[] strs2 = str7.split("\\.");
   for (int i=0;i<strs2.length;i++){

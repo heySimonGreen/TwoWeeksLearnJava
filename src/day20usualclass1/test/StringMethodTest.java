@@ -22,7 +22,6 @@ import java.util.Locale;
  * 12. String substring(int beginIndex,int endIndex) 返回一个新字符串，它是此字符串从beginindex开始截取到endindex(不包含)的一个子字符串
  */
 public class StringMethodTest {
-
     @Test
     public void test2(){
         String s1 = "HelloWorld";
@@ -33,7 +32,6 @@ public class StringMethodTest {
         String s3 = "abc";
         String s4 = new String("def");
         System.out.println(s3.compareTo(s4));//涉及到字符串排序
-
         String s5 = "我家在重庆市黔江区";
         String s6 = s5.substring(3);
         System.out.println(s5);
@@ -41,7 +39,6 @@ public class StringMethodTest {
         String s7 = s5.substring(6,8);
         System.out.println(s7);
     }
-
     @Test
     public void test1(){
         String s1 = "Helloworld";

@@ -7,6 +7,8 @@ package day20usualclass1.test;
  * 1. 常量和常量的拼接结果在常量池。且常量池中不会存在相同内容的常量
  * 2. 只要其中一个有变量，结果就在堆空间中，和new一样
  * String调用intern方法时，强制要求返回的值一定要是在常量池中去声明
+ *
+ * 被final修饰的String相当于是常量了，所以和字面量形式的字符串拼接仍然是在常量池中的
  */
 public class StringTest3 {
   public static void main(String[] args) {
@@ -26,5 +28,11 @@ public class StringTest3 {
     System.out.println(s5 == s7);
     System.out.println(s6 == s7);
     System.out.println(s3 == s8);
+
+    //这里被final修饰的String相当于是常量了，所以和字面量形式的字符串拼接仍然是在常量池中的
+    final String str = "chen";
+    String str2 = str + "wei";
+    String chenwei = "chenwei";
+    System.out.println(chenwei == str2);
   }
 }

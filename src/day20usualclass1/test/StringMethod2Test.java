@@ -17,28 +17,21 @@ import org.junit.Test;
  */
 public class StringMethod2Test {
   public static void main(String[] args) {
-    //
       String str1 = "helloworld";
       boolean b1 = str1.endsWith("rld");
       System.out.println(b1);
-
       boolean he = str1.startsWith("He");
       System.out.println(he);
-
       boolean ll = str1.startsWith("ll", 2);
       System.out.println(ll);
-
       String str2 = "wor";
       System.out.println(str1.contains(str2));
       System.out.println(str1.indexOf("lo"));
-
       //此方法可以用来找某个字符串出现了几次
       System.out.println(str1.indexOf("lo", 5));
-
       String str3 = "hellorworld";
       System.out.println(str3.lastIndexOf("or"));
       System.out.println(str3.lastIndexOf("or",6));
-
       //什么情况下，indexOf(str)和lastIndexOf(str)返回值相同？
       //情况一：存在唯一一个str。情况二：不存在str都返回-1
   }
