@@ -10,6 +10,11 @@
 ## 1.杂记  
 ### 1.1 新建的项目为什么会有out文件夹，而且颜色也不一样？  
 #### 是由IntelliJ IDEA从.class文件重新创建的源代码  
+#### 下载bilibili视频，下载的是后先选择一个需要存放视频的位置
+```python
+pip install you-get
+you-get https://www.bilibili.com/video/BV13U4y1n7SH?spm_id_from=333.851.b_7265636f6d6d656e64.4
+```
 ### 1.2 jdk  
 
 ### 1.3 常用命令行
@@ -2290,6 +2295,119 @@ public class StringMethodTest4 {
     String str3 = i + "";
     //只要有变量参与了都是在堆里
     System.out.println(str3 == str1);
+  }
+}
+```
+#### 消炎药常识
+1. 常用的消炎药种类是有很多的，一般情况下指的消炎药是抗生素或者抗病毒的药物，对于病毒或者细菌感染所造成的炎症都具有一定的消炎作用。
+   > 1. 比如出现了病毒性感染，需要使用利巴韦林、蒲地蓝消炎口服液、蓝芩口服液、四季抗病毒合剂或者达菲进行消炎治疗，效果都是比较好的。 尤其是达菲，适用于流感病毒造成的炎症。
+   > 2. 如果是抗生素类的消炎药，种类是有很多的，比如比较常用的是青霉素类抗生素，像阿莫西林或者阿莫西林克拉维酸钾，
+   > 还有头孢类抗生素，比如头孢氨苄、头孢羟氨苄、头孢拉定、头孢克肟或者头孢克洛。还有大环内酯类的抗生素，像阿奇霉素、罗红霉素或者红霉素，这些药物消炎作用都是比较好的，需要根据具体的感染类型，选择合适的消炎药。
+#### String、StringBuffer、StringBuilder三者之间的异同
+1. String ： 不可变的字符序列；底层使用char[]存储
+2. StringBuffer : 可变的字符序列；线程安全的，效率低；底层使用char[]存储
+3. StringBuilder : 可变的字符序列；JDK5.0新增的，线程不安全的，效率高；底层使用char[]存储
+
+** 源码分析：
+* String str = new String();//char[] value = new char[0];
+* String str = new String("abc");//char[] value = new char[]{'a','b','c'};
+*
+* StringBuffer sb = new StringBuffer();//char[] value = new char[16];底层创建了一个长度是16的字符数组
+* sb.append('a');//value[0]='a';
+* sb.append('b');//value[1]='b'; 
+* StringBuffer sb = new StringBuffer("abc");//char[] value = new char["abc".length() + 16];底层创建了一个长度是16 + "abc".length()的字符数组
+*
+1. 问题 System.out.println(sb.length());是多少？  
+*       这里的length里面是用count实现，实际表示的是里面有多少个字符，所以不用管16，里面是多少个字符就是多少
+2. 问题 **扩容问题**； 如果要添加的数据底层数组放不下了，那就需要扩容底层数组
+*      默认情况下：扩容为原来容量的2倍+2，同时将原有数组中的元素复制到新的数组中。
+*      如果直到开发中需要多次追加，则可以考虑下面的，固定一定容量，就免去复制数组，节省空间和时间
+*      指导意义 : 开发中建议大家使用：StringBuffer(int capacity) 或 StringBuilder(int capacity)
+```java
+public class StringBufferStringBuilderTest {
+  public static void main(String[] args) {
+    StringBuffer stringBuffer = new StringBuffer("abc");
+    stringBuffer.setCharAt(0,'p');
+    System.out.println(stringBuffer);
+    System.out.println(stringBuffer.length());
+
+    StringBuilder stringBuilder = new StringBuilder("def");
+  }
+}
+```
+#### StringBuffer的常用方法，StringBuilder一样
+1. StringBuffer append(xxx) : 提供了很多的append方法，用于字符串的拼接
+2. StringBuffer delete(int start, int end) : 删除指定位置的内容
+3. StringBuffer replace(int start, int end,String str) : 把[start,end)位置替换为str
+4. StringBuffer insert(int offset, xxx) : 在指定位置插入xxx
+5. StringBuffer reverse() : 把当前字符序列逆转
+
+6. public int indexOf(String str) 找出str首次出现的位置
+7. public String substring(int start,int end) 返回一个从start开始到end索引结束的左闭右开区间的子字符串
+8. public int length()
+9. public char charAt()
+10. public void setCharAt(int n,char ch)
+* 总结：
+*      增：append
+*      删：delete
+*      改：setCharAt replace
+*      查：charAt
+*      插：insert
+*      长度：length
+*      遍历:for + charAt / toString
+```java
+public class StringBufferMethod1 {
+  public static void main(String[] args) {
+    StringBuffer stringBuffer = new StringBuffer("abc");
+    stringBuffer.append(1);
+    stringBuffer.append('1');
+    System.out.println(stringBuffer);
+    //注意是左闭右开
+    stringBuffer.delete(2,4);
+    System.out.println(stringBuffer);
+    stringBuffer.replace(2,4,"chenwei");
+    System.out.println(stringBuffer);
+    stringBuffer.insert(2,false);
+    System.out.println(stringBuffer);
+    stringBuffer.reverse();
+  }
+}
+```
+#### 对比String、StringBuffer、StringBuilder三者的效率
+1. 从高到低排序：StringBuilder > StringBuffer > String
+```java
+public class StringEffective {
+  public static void main(String[] args) {
+      long startTime = 0L;
+      long endTime = 0L;
+      int N = 20000000;
+      String str = "";
+      StringBuilder builder = new StringBuilder("");
+      StringBuffer buffer = new StringBuffer("");
+      //开始对比
+//      startTime = System.currentTimeMillis();
+//      for (int i=0;i<N;i++){
+//          str = str + i;
+//      }
+//      endTime = System.currentTimeMillis();
+//      System.out.print("str");
+//      System.out.println(endTime - startTime);
+
+      startTime = System.currentTimeMillis();
+      for (int i=0;i<N;i++){
+          builder.append(String.valueOf(i));
+      }
+      endTime = System.currentTimeMillis();
+      System.out.print("builder");
+      System.out.println(endTime - startTime);
+
+      startTime = System.currentTimeMillis();
+      for (int i=0;i<N;i++){
+          buffer.append(String.valueOf(i));
+      }
+      endTime = System.currentTimeMillis();
+      System.out.print("buffer");
+      System.out.println(endTime - startTime);
   }
 }
 ```
