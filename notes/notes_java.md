@@ -2411,3 +2411,157 @@ public class StringEffective {
   }
 }
 ```
+#### String与StringBuffer、StringBulder之间的转换
+1. String ---> StringBuffer、StringBulder 调用StringBuffer、StringBulder的构造器
+2. StringBuffer、StringBulder ---> String 1、调用String构造器 2、StringBuffer、StringBulder的toString()方法
+#### JVM中字符串字符串常量池存放位置的说明
+1. jdk1.6 字符串常量池存储在方法区(永久区)
+2. jdk1.7 字符串常量池存放在堆空间
+3. jdk1.8 字符串常量池存放在方法区(元空间)
+### jdk8 之前日期时间API
+#### 获取系统当前时间
+1. Long currentTime = System.currentTimeMillis(); 返回当前时间与1970年1月1日0时0分0秒之间以毫秒为单位的时间差 称为时间戳
+#### java.util.Date类与java.sql.Date类
+1. sql.Date类是util.Date类的子类
+> java.util.Date类  
+>         -------------java.sql.Date
+* 1. 两个构造器的使用
+>      构造器一：Date() 创建当前时间的Data对象
+>      构造器二：创建指定毫秒数的Date对象
+
+* 2. 两个方法的使用
+>      >toString //显示当前时间的年月日时分秒
+>      >getTime //获取当前date对象的时间戳，具体到毫秒
+
+* 3. java.sql.Date对应着数据库中的日期类型的变量
+> 如何实例化  
+> sql.Date  --->  util.Date 子转父，可强转   
+> util.Date  --->  sql.Date  通过毫秒数  
+```java
+    public void dateTimeTest(){
+        //构造器一：Date() 创建当前时间的Data对象
+        Date date1 = new Date();
+        System.out.println(date1.toString());
+        System.out.println(date1.getTime());
+        //构造器二：创建指定毫秒数的Date对象
+        Date date2 = new Date(1628860522707L);
+        System.out.println(date2.toString());
+        //创建java.sql.Date对象
+        java.sql.Date date = new java.sql.Date(1628860522707L);
+        System.out.println(date);
+        //如何将util.Date  转换为--->  sql.Date   通过毫秒数
+        Date date3 = new Date();
+        java.sql.Date date4 = new java.sql.Date(date3.getTime());
+        System.out.println(date4);
+    }
+```
+#### java.text.SimpleDateFormat类
+```java
+/**
+ * @author: chenwei
+ * @date: 2021/8/15 1:07
+ * @description: jdk8之前的日期时间API测试
+ * 1. System类中的currentTimeMillis();
+ * 2. java.util.Date和java.sql.Date
+ * 3. simpleDateFormat
+ * 4. Calender
+ *
+ * SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+ * 注意这里后面的yyyy和dd写成大写的会有问题，为什么呢？
+ * 直接记忆MM为什么大写吧，因为和分钟minute的m冲突，所以月份要大写
+ *
+ * simpleDateFormat的使用：simpleDateFormat对日期Date类的格式化和解析
+ * 1. 两个操作
+ * 1.1 格式化：日期 --> 字符串
+ * 1.2 解析： 格式化的逆过程，字符串 --> 日期
+ *
+ * 2. simpleDateFormat的实例化
+ * SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("YYYY-MM-dd hh-mm-ss");//指定日期格式的实例化
+ * SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+ */
+public class TestDataSimpleDateFormat {
+  public static void main(String[] args) throws ParseException {
+      //实例化simpleDateFormat
+      SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+
+      //格式化：日期 --> 字符串
+      Date date = new Date();
+      System.out.println("date = " + date);
+
+      String s = simpleDateFormat.format(date);
+      System.out.println("s = " + s);
+
+      //解析：格式化的逆过程，字符串-->日期
+      String str = "19-12-03 上午 11:66";
+      Date date1 = new Date();
+      date1 = simpleDateFormat.parse(str);
+      System.out.println("date1 = " + date1);
+
+      System.out.println("\"******************\" = " + "******************");
+      //格式化
+      SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat("YYYY-MM-dd hh-mm-ss");
+      System.out.println("simpleDateFormat1.format(date1) = " + simpleDateFormat1.format(date1));
+      //解析
+      Date date2 = simpleDateFormat1.parse("2019-12-03 12-06-00");
+      System.out.println("date2 = " + date2);
+      Date date3 = new Date();
+      System.out.println(simpleDateFormat1.format(date3));
+      //练习1 将字符串“2020-09-08”转换为java.sql.Date
+      String s1 = new String("2020-09-08");
+      SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+      Date date4 = simpleDateFormat2.parse(s1);
+      java.sql.Date sqlDate = new java.sql.Date(date4.getTime());
+      System.out.println("sqlDate = " + sqlDate);
+      //练习2 三天打鱼两天晒网 1990-09-08 xxxx-xx-xx打鱼还是筛网？
+      /*
+      * 关键计算到那一天的总天数，关于计算总天数的问题，考虑使用毫秒数解决问题，获取毫秒数相减
+      * 计算天数 (date2.getTime() - date1.getTime()) / (1000 * 60 * 60 *24) + 1
+      * 总天数%5 == 1,2,3 打鱼
+      * 总天数%5 == 4，0 筛网
+      * */
+  }
+}
+```
+#### Calender类 Calendar日历类（抽象类）的使用
+```java
+public class TestCalendar {
+  public static void main(String[] args) {
+      /*
+      * 1. 实例化
+      * 方式一、 创建其子类（GregorianCalendar）的对象
+      * 方式二、 调用其静态方法GetInstance()
+      * 2. 常用方法
+      * get()
+      * set()
+      *
+      * */
+      Calendar instance = Calendar.getInstance();
+      GregorianCalendar gregorianCalendar = new GregorianCalendar();
+
+      //get()方法
+      int days = instance.get(Calendar.DAY_OF_MONTH);
+    System.out.println("days = " + days);
+    System.out.println("DAY_OF_YEAR = " + instance.get(Calendar.DAY_OF_YEAR));
+
+    //set方法
+    //这里set过后将Calendar对象本身就改了
+    instance.set(Calendar.DAY_OF_MONTH,10);
+    System.out.println(
+        "instance.get(Calendar.DAY_OF_MONTH) = " + instance.get(Calendar.DAY_OF_MONTH));
+    //add方法,虽然没有减，但是可以把参数修改为负的就相当于是减了
+      instance.add(Calendar.DAY_OF_MONTH,9);
+      instance.add(Calendar.DAY_OF_MONTH,-1);
+    System.out.println(
+        "instance.get(Calendar.DAY_OF_MONTH) = " + instance.get(Calendar.DAY_OF_MONTH));
+
+    //getTime() 日历类  --> date
+      Date d = instance.getTime();
+    System.out.println("d = " + d);
+    //setTime() date --> 日历类
+      Date date = new Date();
+      instance.setTime(date);
+    System.out.println(
+        "instance.get(Calendar.DAY_OF_MONTH) = " + instance.get(Calendar.DAY_OF_MONTH));
+  }
+}
+```
