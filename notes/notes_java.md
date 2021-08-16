@@ -2565,3 +2565,126 @@ public class TestCalendar {
   }
 }
 ```
+#### jdk8中日期时间api
+##### LocalDate、LocalTime、LocalDateTime的使用
+1. LocalDateTime的使用频率相较LocalDate、LocalTime使用频率更高  
+2. 类似于Calendar类  
+```java
+public class TestLocalDate {
+  public static void main(String[] args) {
+      //now()获取当前的日期、时间、时间+日期
+      LocalDate localDate = LocalDate.now();
+      LocalTime localTime = LocalTime.now();
+      LocalDateTime localDateTime = LocalDateTime.now();
+    System.out.println("localDate = " + localDate);
+    System.out.println("localTime = " + localTime);
+    System.out.println("localDateTime = " + localDateTime);
+
+    //of()设置指定的年、月、日、时、分、秒。没有偏移量
+      LocalDateTime of = LocalDateTime.of(2021, 10, 3, 3, 3, 3);
+      System.out.println(of);
+
+    // getXxx() 获取某个属性
+    System.out.println(localDateTime.getDayOfMonth());
+    System.out.println(localDateTime.getDayOfWeek());
+    System.out.println(localDateTime.getMonth());
+    System.out.println(localDateTime.getMinute());
+
+    //体现不可变性,这里对比calendar类的可变性，calendar没有返回值，而这里有返回值所以也可以看出不可变性
+      //withXxx()设置相关属性，类似于Calendar的set
+      LocalDate localDate1 = localDate.withDayOfMonth(22);
+    System.out.println(localDate);
+    System.out.println(localDate1);
+
+    //LocalDate、LocalTime、LocalDateTime是一样的
+      LocalDateTime localDateTime1 = localDateTime.withHour(2);
+    System.out.println(localDateTime1);
+    System.out.println(localDateTime);
+
+    //不可变性，
+      //plus加
+      LocalDateTime localDateTime2 = localDateTime.plusMonths(3);
+    System.out.println(localDateTime);
+    System.out.println(localDateTime2);
+
+      //不可变性，
+      //minus
+      LocalDateTime localDateTime3 = localDateTime.minusDays(5);
+    System.out.println(localDateTime);
+    System.out.println(localDateTime3);
+  }
+}
+```
+##### Instant 瞬时的使用  
+1. 类似于java.util.Date类
+```java
+public class TestInstant {
+  public static void main(String[] args) {
+      //now()对应本初子午线的标准时间
+      Instant instant = Instant.now();
+    System.out.println(instant);
+    //添加时间的偏移量
+      OffsetDateTime offsetDateTime = instant.atOffset(ZoneOffset.ofHours(8));
+    System.out.println(offsetDateTime);
+    //toEpochSecond() 获取对应的毫秒数，和Date一样的 获取自1970年1月1日0时0分0秒的毫秒数
+      long toEpochSecond = offsetDateTime.toEpochSecond();
+    System.out.println(toEpochSecond);
+
+    //ofEpochMilli()通过给定的毫秒数，获取Instant实例 --> Date(Long long )
+      Instant instant1 = Instant.ofEpochMilli(toEpochSecond);
+    System.out.println(instant1);
+
+  }
+}
+```
+##### 格式化或解析时间、日期DateTimeFormatter的使用  
+1. 实例化
+> 方式一：预定义标准格式 三种DateTimeFormatter.ISO_LOCAL_DATE_TIME;ISO_LOCAL_DATE;ISO_LOCAL_TIME   
+> 方式二：本地化的相关格式 DateTimeFormatter.ofLocalizedDateTime();  
+> DateTimeFormatter.ofLocalizedDate();  
+> DateTimeFormatter.ofLocalizedTime();    
+> 重点 方式三: 自定义的格式   
+```java
+public class TestDateTimeFormatter {
+  public static void main(String[] args) {
+      //实例化
+      //方式一：预定义标准格式 三种DateTimeFormatter.ISO_LOCAL_DATE_TIME;ISO_LOCAL_DATE;ISO_LOCAL_TIME
+      DateTimeFormatter isoLocalDateTime = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+      //创建一个LocalDateTime用于格式化
+      //格式化 LocalDateTime --> String
+      LocalDateTime localDateTime = LocalDateTime.now();
+      String str_isoLocalDateTime = isoLocalDateTime.format(localDateTime);
+      System.out.println("str_isoLocalDateTime"+str_isoLocalDateTime);
+    System.out.println(localDateTime);
+    //解析 String --> LocalDateTime TemporalAccessor由于不知道是LocalDateTime还是LocalDate还是LocalTime，这里是一个接口形式呈现的，是一个多态形式
+      TemporalAccessor parse = isoLocalDateTime.parse("2021-08-15T20:41:29.065");
+    System.out.println(parse);
+
+    //方式二:本地化的相关格式 DateTimeFormatter.ofLocalizedDateTime();DateTimeFormatter.ofLocalizedDate();DateTimeFormatter.ofLocalizedTime()
+      //FormatStyle.LONG/FormatStyle.SHORT/FormatStyle.FULL
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.LONG);
+      //2021年8月16日 上午01时37分38秒
+      String format = dateTimeFormatter.format(LocalDateTime.now());
+    System.out.println(format);
+
+    System.out.println("********** DateTimeFormatter.ofLocalizedDate()");
+      DateTimeFormatter dateTimeFormatter1 = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL);
+      //2021年8月16日 星期一
+      String format1 = dateTimeFormatter1.format(LocalDate.now());
+    System.out.println(format1);
+
+    // 重点：方式三 自定义的格式
+    System.out.println("方式3 重点");
+      DateTimeFormatter dateTimeFormatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
+      //解析
+      String str_2 = dateTimeFormatter2.format(LocalDateTime.now());
+      System.out.println(str_2);
+    System.out.println(LocalDateTime.now());
+    // 格式化
+    System.out.println("格式化");
+      String s = "2010-03-01 12:12:12";
+      TemporalAccessor parse1 = dateTimeFormatter2.parse(s);
+    System.out.println(s);
+    System.out.println(parse1);
+  }
+```
