@@ -51,7 +51,7 @@ public class TestCompare {
       }
       System.out.println(Arrays.toString(goods));
 
-      //方法二：
+      //方法二：临时定制排序
   }
   @Test
   public void compareTest(){

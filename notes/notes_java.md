@@ -2688,3 +2688,35 @@ public class TestDateTimeFormatter {
     System.out.println(parse1);
   }
 ```
+
+## day22
+### 复习
+1. jdk8之前和jdk8中日期、时间相关的类分别有哪些？
+   >java.util.Date和java.sql.Date -> Instant
+   > SimpleDateFormat -> DateTimeFormat
+   > Calendar -> LocalTime、LocalDate、LocalDateTime
+2. 将字符串“2021-03-06”转换为对应的java.sql.Date对象 
+   > 方式一
+   > SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd")
+   > java.sql.Date = date = sdf.parse(“2021-03-06”)
+   **************************
+   > 方式二
+   > DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+3. 解释何为编码解码？何为日期时间的格式化、解析
+4. 自定义Person类，包含姓名年龄，如下，如何实现自然排序（按姓名从小到大）
+5. 提供定制排序涉及到的接口的实现类对象，并按Person类的年龄从大到小排序
+### 日期时间API的迭代
+1. 第一代jdk1.0 Date  
+2. jdk1.1 Calendart类，一定程度上替换Date
+3. jdk1.8提出了新的一套PAI  
+## 枚举类和enmu,以及注解的使用
+### 主要内容
+1. 如何自定义枚举类
+2. 如何使用关键字enmu定义枚举类
+3. Enum类的主要方法
+4. 实现接口的枚举类
+#### 枚举类的使用
+1. 类的对象只有有限个，确定的。如一下
+>星期、性别、季节、支付方式、就职状态
+2. 当需要定义一组常量时，强烈建议使用枚举类
+
