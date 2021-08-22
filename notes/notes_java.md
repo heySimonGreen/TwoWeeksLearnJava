@@ -1328,6 +1328,8 @@ public Programmer() {
    （若一个进程同一时间并行执行多个线程，就是支持多线程的）
    （一个进程中的多个线程共享相同的内存单元/内存地址空间->他们从同一堆中分配对象，可以访问相同的变量和对象。这就使得线程间通信更简便、高效。但多个线程操作共享的系统资源可能就会带来安全隐患）  
 ### 并行、并发  
+### (java线程有六种状态)[https://blog.csdn.net/qq_22771739/article/details/82529874]
+1. 新建、运行、阻塞、等待、超时等待、结束
 1. 并行：多个cpu同时执行多个任务  
 2. 并发：一个cpu（采用时间片）同时执行多个任务。比如秒杀、多个人同时做一件事  
 ### 何时需要多线程  
@@ -2710,7 +2712,13 @@ public class TestDateTimeFormatter {
 2. jdk1.1 Calendart类，一定程度上替换Date
 3. jdk1.8提出了新的一套PAI  
 ## 枚举类和enmu,以及注解的使用
-### 主要内容
+### 枚举类
+```java
+public enum Status {
+    FREE,BUSY,NO;
+}
+```
+#### 主要内容
 1. 如何自定义枚举类
 2. 如何使用关键字enmu定义枚举类
 3. Enum类的主要方法
@@ -2719,4 +2727,183 @@ public class TestDateTimeFormatter {
 1. 类的对象只有有限个，确定的。如一下
 >星期、性别、季节、支付方式、就职状态
 2. 当需要定义一组常量时，强烈建议使用枚举类
+
+#### 一、 枚举类的使用
+1. 枚举类的理解：类的对象只有有限个，确定的。我们称此类为枚举类
+2. 当需要定义一组常量时，强烈建议使用枚举类
+3. 如果枚举类中只有一个对象，则可以作为单例模式的实现方式
+#### 二、 如何定义枚举类
+1. 方式一、jdk5.0之前自定义枚举类
+2. 方式二、jdk5.0之后，可以使用enum关键字定义枚举类
+#### 三、enum类中的常用方法
+1. values()方法：返回枚举类型的对象数组。该方法可以很方便地遍历所有的枚举值。
+2. valueOf(String str)方法可以把一个字符串转为对应的枚举类型对象，要求字符串必须是枚举类型对应
+3. toString()返回当前枚举类对象常量的名称
+#### 四、使用enum关键字定义的枚举类实现接口的情况
+1. 实现接口，在enum类中实现抽象方法
+2. 让枚举类的对象分别实现接口中的抽象方法
+### 注解annotation
+1. 注解(annotation)概述
+2. 常见的annotation示例
+3. 自定义annotation
+4. JDK中的元注解
+5. 利用反射获取注释信息(在反射部分涉及)
+6. JDK中注解的新特性
+#### 1. 注解的理解
+1. jdk5.0新增的功能
+2. Annotation其实就是代码里的特殊标记，这些标记可以在编译，类加载，运行时被读取，并执行相应的处理。通过使用Annotation。
+   程序员可以在不改变原逻辑的情况下，在源文件中嵌入一些补充信息。
+3. 在JavaSe中，注解的使用目的比较简单，例如标记过时的功能，忽略警告等。在JavaEE/Android中注解占据了更重要的角色，
+   例如用来配置应用程序的任何切面，代替旧版JavaEE中所遗留的繁冗代码和XML配置
+4. 框架 = 注解 + 反射机制 + 设计模式
+#### 2. Annotation的使用示例
+1. 示例一：生成文档相关的注解
+2. 示例二：在编译时进行格式检查(JDK内置的三个基本注解)
+   @Override:限定重写父类方法，该注解只能用于方法
+   @Deprecated:用于表示所修饰的元素(类、方法等)已过时。通常时因为所修饰的结构危险或存在更好的选择
+   @SuppresWarnings:抑制编译器警告
+3. 提示：跟踪代码依赖性，实现替代配置文件功能
+#### 3. 如何自定义注解：参照@SuppresWarnings注解的定义
+1. 注解声明为@interface
+2. 内部定义成员，通常使用value表示
+3. 可以指定成员的默认值
+4. 如果自定义注解没有成员，表明是一个表示作用
+5. 如果注解有成员，在使用注解时，需指定成员的值。
+6. 自定义注解必须配上注解的信息处理流程(使用反射)才有意义。
+7. 自定义注解通常都会指明两个元注解，Retention、Target
+8. 代码举例
+
+```java
+import javax.swing.text.Element;
+import java.lang.annotation.ElementType;
+
+@Inherited
+@Repeatable(value = MyAnnotation.class)
+@Retention(RetentionPolicy.RUNTIME)
+@Target({TYPE, FIELD, METHOD, PARMETER, CONSTRUCTOR, ElementType.LOCAL_VARIABL, ElementType.TYPE_PARAMETER, ElementType.TYPE_USE})
+public @interface MyAnnotation {
+   String value() default "hello";
+}
+```
+#### 4. 如何获取注释信息：通过反射来获取调用。
+1. 前提：要求此注解的元注解Retention中声明的生命周期为RUNTIME
+#### 5. JDK8中注解的新特性：可重复注释，类型注解
+##### 5.1 可重复注解：
+   1. 在MyAnnotation上声明@Repeatable,成员值为MyAnnotations.class  
+   2. MyAnnotation的Target和Retention等元注解于MyAnnotation相同  
+#####5.2 类型注解：
+   1. ElementType.TYPE_PARAMETER表示该注解能写在类型变量的声明语句中，如泛型声明  
+   2. ElementType.TYPE_USE表示该注解能写在使用类型的任何语句中  
+### day23 java集合
+1. 集合框架概述
+2. Collection接口方法
+3. Iterator迭代器接口
+4. Collection子接口 List
+5. Collection子接口 Set
+6. Map接口
+7. Collections工具类
+### 集合框架概述
+1. 集合、数组都是对多个数据进行存储操作的结构，简称Java容器
+> 说明：此时的存储，主要指的是内存层面的存储，不涉及到持久化存储(txt,mysql,数据等)  
+#### 数组
+2. 数组在存储多个数据方面的优点：
+> 一旦初始化后长度就固定了
+> 1. 数组一旦定义好，其元素的类型也就确定了。我们也就只能操作指定类型的数据了。  
+> 2. 比如String[] str;int[] arr;等
+3. 数组在存储多个数据方面的缺点：
+> 1. 一旦初始化后长度就不能修改。  
+> 2. 数组中提供的方法非常有限，对于添加、删除、插入数据等操作，非常不便，同时效率不高。 
+> 3. 获取数组中实际元素的需求，数组没有实际的属性或方法可用  
+> 4. 数组存储数据的特点：有序、可重复。对于无序，不可重复的需求，不能满足。  
+#### 集合框架
+1. Collection接口：单列集合，用来存储一个一个的对象，
+> 1. list接口：存储有序的、可重复的数据。 --> "动态"数组  
+>> ArrayList、LinkedList、Vector
+> 2. Set接口：存储无序的、不可重复的数据 --> 高中所讲的集合
+>> HashSet、LinkedHashSet、TreeSet
+2. Map接口：双列集合：用来存储一对(key-value)一对的数据
+>> HashMap、LinkedHashMap、TreeMap、HashTable、Properties
+##### Collection接口下的常用方法 Collection collection = new ArrayList();
+1. add(E e)  添加元素 确保此集合包含指定的元素。
+2. addAll(Collection<? extends E> c) 将指定集合中的所有元素添加到此集合。
+3. clear() 从此集合中删除所有元素
+4. contains(Object o) 如果此集合包含指定的元素，则返回 true 。
+5. containsAll(Collection<?> c) 如果此集合包含指定 集合中的所有元素，则返回true。
+6. equals(Object o) 将指定的对象与此集合进行比较以获得相等性
+7. hashCode() 返回此集合的哈希码值
+8. isEmpty() 如果此集合不包含元素，则返回 true 。
+9. iterator()返回此集合中的元素的迭代器。
+10. remove(Object o)从该集合中删除指定元素的单个实例（如果存在）（可选操作）。
+11. removeAll(Collection<?> c)删除指定集合中包含的所有此集合的元素（可选操作）。 此调用返回后，此集合将不包含与指定集合相同的元素。
+12. retainAll(Collection<?> c)仅保留此集合中包含在指定集合中的元素（可选操作）。 换句话说，从该集合中删除所有不包含在指定集合中的元素。
+13. 	size()
+14. toArray(T[] a)返回包含此集合中所有元素的数组; 返回的数组的运行时类型是指定数组的运行时类型。
+##### 迭代器的使用
+```java
+        Iterator iterator = collection.iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+```
+##### forEach循环遍历集合或数组
+```java
+        for (Object c : collection){
+            System.out.println(c);
+        }
+```
+1. 一道面试题 String 是一个引用，修改它不会改变原有的值
+```java
+        //foreach遍历面试题
+        String[] str = new String[]{"fsd","sdaf","asdf"};
+        //会改变
+        for (int i=0;i<str.length;i++){
+            str[i] = "ffff";
+        }
+        //不会改变
+        for (String s : str){
+            s = "fffff";
+        }
+        for (String s:str ) {
+            System.out.println(s);
+        }
+```
+#### ArrayList、LinkedList、Vector的底层实现和异同
+1. ArrayList：作为list接口的主要实现类；线程不安全的，效率高；底层使用Object[] elementData
+2. LinkedList: 对于频繁的插入、删除操作，使用此类比ArrayList效率高；底层使用双向链表存储数据
+3. Vector:作为List接口的古老实现类；线程安全的，效率低；底层使用Object elementData
+#### 面试题 ArrayList、LinkedList、Vector三者的异同
+1. 三个类都实现了List接口，存储数据的特点相同：存储有序的、可重复的数
+2. 不同：见上底层实现
+#### ArrayList源码分析 jdk7和8底层不同 
+##### jdk7中
+1. ArrayList arrayList = new ArrayList();//底层创建了长度是10的Object[]数组elementData
+   arrayList.add(123) --> elementData[0] = new Integer(123)
+   arrayList.add(1) 如果此次添加导致底层elementData数组容量不够则扩容，默认情况下扩容为原来的1.5倍，同时需要将原有的数据赋值到新的数组中
+2. 结论：建议开发中使用带参的构造器： ArrayList arrayList = new ArrayList(int capacity); 以免重复复制数组导致效率低
+##### jdk8中 当添加元素的时候才把容量设置为10，相当于饿汉式和懒汉式的区别
+1. ArrayList arrayList = new ArrayList();//底层Object[] elementData = 初始化为{},并没有创建长度为10的数组
+   arrayList.add(123) 第一次调用add()时，底层才创建了长度为10的数组，并将数据123添加到elementData中，
+   后续的添加出发扩容机制于jdk7一样
+##### 小节
+1. jdk7中的ArrayList的对象的创建类似于单例的饿汉式，而jdk8中的ArrayList的对象的创建类似于单例的懒汉式，延迟了数组的创建，节省内存。
+#### LinkedList源码分析
+1. LinkedList linkedList = new LinkedList();内部声明了Node类型的first和last属性，默认值为null
+   list.add(012);将123封装到Node中，创建了Node对象。
+   其中，Node定义为：体现了LinkedList的双向链表的说法
+```java
+    private static class Node<E> {
+        E item;
+        Node<E> next;
+        Node<E> prev;
+
+        Node(Node<E> prev, E element, Node<E> next) {
+            this.item = element;
+            this.next = next;
+            this.prev = prev;
+        }
+    }
+```   
+#### Vector源码分析
+1. jdk7和jdk8中通过构造器创建对象时，底层都创建了长度为10的数组，在扩容方面，默认扩容为原来的两倍
+
 
