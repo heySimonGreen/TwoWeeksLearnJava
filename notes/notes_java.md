@@ -4,6 +4,7 @@
 2. 在要输出的变量后输.soutv，就可以了  
 3. ctrl+alt+t try-catch快捷键  
 4. alt +enter 快速创间对象快捷键
+5. Ctrl+Shift+Alt+N;知道类名查找类，通过类名查找类
 尚硅谷学习 数据结构、常用算法、常用设计模式、JVM  
 [java面试1](https://mp.weixin.qq.com/s/-xFSHf7Gz3FUcafTJUIGWQ)
 
@@ -2794,7 +2795,7 @@ public @interface MyAnnotation {
 #####5.2 类型注解：
    1. ElementType.TYPE_PARAMETER表示该注解能写在类型变量的声明语句中，如泛型声明  
    2. ElementType.TYPE_USE表示该注解能写在使用类型的任何语句中  
-### day23 java集合
+## day23 java集合
 1. 集合框架概述
 2. Collection接口方法
 3. Iterator迭代器接口
@@ -2823,7 +2824,7 @@ public @interface MyAnnotation {
 >> HashSet、LinkedHashSet、TreeSet
 2. Map接口：双列集合：用来存储一对(key-value)一对的数据
 >> HashMap、LinkedHashMap、TreeMap、HashTable、Properties
-##### Collection接口下的常用方法 Collection collection = new ArrayList();
+##### Collection接口下的常用方法 Collection collection = new ArrayList();这也算是一个面试题，15个常用方法
 1. add(E e)  添加元素 确保此集合包含指定的元素。
 2. addAll(Collection<? extends E> c) 将指定集合中的所有元素添加到此集合。
 3. clear() 从此集合中删除所有元素
@@ -2905,5 +2906,135 @@ public @interface MyAnnotation {
 ```   
 #### Vector源码分析
 1. jdk7和jdk8中通过构造器创建对象时，底层都创建了长度为10的数组，在扩容方面，默认扩容为原来的两倍
+#### List接口中常用方法测试 List除了从Collection集合继承的方法外，List集合里添加了一些根据索引来操作集合元素的方法
+1. void add(int index,Object ele) 在index位置插入ele元素
+2. boolean addAll(int index,Collection eles) 从index位置开始将eles中的所有元素添加进来
+3. Object get(int index) 获取指定index位置的元素
+4. int indexOf(Object obj) 返回obj在集合中首次出现的位置
+5. int lastIndexOf(Object obj) 返回obj在集合中最后一次出现的位置
+6. Object remove(int index) 移除指定位置的元素，并返回此元素
+7. Object set(int index,Object ele) 设置指定index位置的元素为ele
+8. List subList(int fromIndex,int toIndex) 返回从fromIndex到toIndex位置的子集合
+##### list的一道面试题
+```java
+    public void test6(){
+        //remove()有两个，一个删除指定位置的元素，一个删除指定对象，当对象是数字时，要使用包装类
+        ArrayList arrayList = new ArrayList();
+        arrayList.add(1);
+        arrayList.add(2);
+        arrayList.add(3);
+        arrayList.remove(2);
+        arrayList.remove(new Integer(2));
+        System.out.println(arrayList);
+    }
+```
+### Set(存储无序的、不可重复的数据)接口中hashset、linkedHashSet、treeSet源码分析
+#### 添加元素的过程，以hashSet为例子
+1. 我们向hashSet中添加元素a,首先调用元素a所在类的hashcode方法，计算元素a的hash值，
+   接着通过此hash值计算出在Hashset底层数组中存放的位置(即为索引位置)，判断数组此位置上是否已经有元素：
+2. 如果此位置上没有其他元素，则元素a添加成功， --> 情况1
+3. 如果此位置上有其他元素b(或以链表存在的多个元素)，则比较元素a与元素b的hash值：
+   1. 如果hash值不同，则元素a添加成功。 --> 情况2
+   2. 如果hash值相同，进而需要调用元素a所在类的equals方法：
+      1. equals返回true，元素a添加失
+      2. equals返回false，元素a添加成功 --> 情况3
+4. 对于添加成功的情况2和3而言：元素a与已经存在指定位置上的数据以链表的方式存储。  
+jdk7:元素a存放在数组中，指向原来的元素  
+jdk8:原来的元素在数组中，指向元素a  
+总结：七上八下     
+hashSet底层：数组+链表存储      
+#### linkedHashSet存储过程与hashSet一样
+1. 在底层添加了首位指针，方便读取前后的元素 --> 如果需要频繁地遍历操作，那么优先选择linkedHashSet
+#### treeSet
+1. 向treeSet中添加的数据，相求是相同类的数据。
+2. 两种排序方式：自然排序(实现Comparable接口)、和定制排序
+3. 自然排序中，比较两个对象知否相等的标准为：compareTo()返回0,不再是equals()
+   1. 注意：如果有多个属性，然而比较中只使用一个属性，那么这个属性相同的话添加到treeSet中就认为是同一个
+      ，将不再添加进去，所以要比较整个对象的话需要重写Comparable方法，并且只有当每个元素都相等时才返回0；
+##### treeSet 实现一个定制排序,外加一个自然排序 
+```java
+public class TestCollection3 {
+    @Test
+    public void treeSet(){
+        Comparator comparator = new Comparator() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                if (o1 instanceof Person && o2 instanceof Person){
+                    Person p1 = (Person) o1;
+                    Person p2 = (Person) o2;
+                    if (p1 == p2){
+                        return 0;
+                    }else {
+                        if (p1.getName().equals(p2.getName())){
+                            if (p1.getAge() == p2.getAge()){
+                                return 0;
+                            }else {
+                                return p1.getAge() - p2.getAge();
+                            }
+                        }else {
+                            return p1.getName().compareTo(p2.getName());
+                        }
+                    }
+                }else {
+                    throw new RuntimeException("不是同一个对象" + getClass().getName());
+                }
+            }
+        };
+        TreeSet treeSet = new TreeSet(comparator);
+        treeSet.add(new Person("陈伟",24));
+        treeSet.add(new Person("陈伟",22));
+        treeSet.add(new Person("陈伟",26));
+        treeSet.add(new Person("陈伟",26));
+        treeSet.add(new Person("陈大大",24));
+        System.out.println(treeSet);
+    }
+}
+```
+##### 理解hashSet的面试题 hashcode equals 的理解
+```java
+public class InterviewTest {
+  public static void main(String[] args) {
+      HashSet hashSet = new HashSet();
+      Person p1 = new Person("CHENWEI",33);
+      Person p2 = new Person("CHENWEI",24);
+      hashSet.add(p1);
+      hashSet.add(p2);
+      System.out.println(hashSet);
 
+      p1.setName("chendada");
+      hashSet.remove(p1);
+      System.out.println(hashSet);
 
+      hashSet.add(new Person("chendada",33));
+      System.out.println(hashSet);
+
+      hashSet.add(new Person("CHENWEI",33));
+      System.out.println(hashSet);
+
+  }
+}
+```
+##### 面试题 在List内去除重复的数字，要求尽量简单
+```java
+    public static List d(List list){
+        HashSet hashSet = new HashSet();
+        hashSet.addAll(list);
+        return new ArrayList(hashSet);
+    }
+```
+### map的实现类结构
+1. map 双列数据，存储key-value对的数据，---类似于高中的函数y=f(x)
+   1. hashMap：作为map的主要实现类：线程不安全的，效率高；可以存储null的key和value
+      ---- linkedHahMap:保证在遍历map元素时，可以按照添加的顺序实现遍历。
+         原因：在原有的hashMap底层结构基础上，添加了指针，指向前一个元素和后一个元素。  
+         对于频繁的遍历操作，此类的执行效率高于hashMap  
+   2. treeMap:保证按照添加的key-value对进行排序，实现排序遍历。此时考虑key的自然排序或者定制排序，底层使用红黑树。
+   3. Hashtable:作为古老的实现类；线程安全的，效率低；不能存储null的key-value  
+      ----Properties:常用来处理配置文件。key-value都是String类型
+#### HashMap的底层：
+1. 数组+链表(jdk7及之前) 
+2. 数组+链表+红黑树(jdk8)
+#### 面试题
+1. HashMap底层实现原理
+2. HashMap和Hashtable的异同
+3. CurrentHashMap 与 Hashtable的异同
