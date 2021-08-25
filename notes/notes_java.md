@@ -3048,9 +3048,9 @@ public class InterviewTest {
 ...可能已经执行过多次put...  
 map.put(key1,value1):
    首先调用key1所在类的hashCode()计算key1的hash值，此hash值经过某种算法以后，得到在entry中存放的位置。  
-   &emsp;&emsp;如果此位置上的数据为空，此时的key1-value1存放成功  
-   &emsp;&emsp;如果此位置上的数据不为空，(意味着此位置上存在一个或多个数据(以链表形式存在)),比较key1和已经存在的一个或多个数据的hash值  
-   &emsp;&emsp;&emsp;&emsp;如果key1的hash值与已经存在的数据的hash值都不相同，此时key1-value1添加成功。
-   &emsp;&emsp;&emsp;&emsp;如果key1的hash值与已经存在的数据(key2-value2)的hash值相同，继续比较，调用key1所在类的equals方法  
-   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;如果equals返回false，：此时key1-value1添加成功
-   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;如果equals返回true，：使用value1替换value2  
+   &emsp;&emsp;如果此位置上的数据为空，此时的key1-value1存放成功    
+   &emsp;&emsp;如果此位置上的数据不为空，(意味着此位置上存在一个或多个数据(以链表形式存在)),比较key1和已经存在的一个或多个数据的hash值    
+   &emsp;&emsp;&emsp;&emsp;如果key1的hash值与已经存在的数据的hash值都不相同，此时key1-value1添加成功。  
+   &emsp;&emsp;&emsp;&emsp;如果key1的hash值与已经存在的数据(key2-value2)的hash值相同，继续比较，调用key1所在类的equals方法    
+   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;如果equals返回false，：此时key1-value1添加成功  
+   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;如果equals返回true，：使用value1替换value2    
