@@ -3022,7 +3022,7 @@ public class InterviewTest {
         return new ArrayList(hashSet);
     }
 ```
-### map的实现类结构
+### 一、map的实现类结构
 1. map 双列数据，存储key-value对的数据，---类似于高中的函数y=f(x)
    1. hashMap：作为map的主要实现类：线程不安全的，效率高；可以存储null的key和value
       ---- linkedHahMap:保证在遍历map元素时，可以按照添加的顺序实现遍历。
@@ -3038,3 +3038,19 @@ public class InterviewTest {
 1. HashMap底层实现原理
 2. HashMap和Hashtable的异同
 3. CurrentHashMap 与 Hashtable的异同
+###  二、map结构的理解
+1. map中的key：无序的、不可重复的，使用set存储所有的key ---> key所在的类要重写equals()和hashcode() 以hashmap为例
+2. map中的value：无序、可重复的，使用Collection存储所有的value ---> value所在的类要重写equals()
+3. 一个键值对key-value构成了一个Entry对象
+4. map中的entry：无序、不可重复的，使用set存储所有的entry
+### 三、hashMap底层实现原理 jdk7为例
+1. HashMap map = new HashMap(); 在实例化以后，底层创建了长度为16的一维数组entry[] table。  
+...可能已经执行过多次put...  
+map.put(key1,value1):
+   首先调用key1所在类的hashCode()计算key1的hash值，此hash值经过某种算法以后，得到在entry中存放的位置。  
+   &emsp;&emsp;如果此位置上的数据为空，此时的key1-value1存放成功  
+   &emsp;&emsp;如果此位置上的数据不为空，(意味着此位置上存在一个或多个数据(以链表形式存在)),比较key1和已经存在的一个或多个数据的hash值  
+   &emsp;&emsp;&emsp;&emsp;如果key1的hash值与已经存在的数据的hash值都不相同，此时key1-value1添加成功。
+   &emsp;&emsp;&emsp;&emsp;如果key1的hash值与已经存在的数据(key2-value2)的hash值相同，继续比较，调用key1所在类的equals方法  
+   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;如果equals返回false，：此时key1-value1添加成功
+   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;如果equals返回true，：使用value1替换value2  
