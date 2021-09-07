@@ -5,6 +5,7 @@
 3. ctrl+alt+t try-catch快捷键  
 4. alt +enter 快速创间对象快捷键
 5. Ctrl+Shift+Alt+N;知道类名查找类，通过类名查找类
+6. ctrl+p new 对象时构造函数使用的提示功能
 尚硅谷学习 数据结构、常用算法、常用设计模式、JVM  
 [java面试1](https://mp.weixin.qq.com/s/-xFSHf7Gz3FUcafTJUIGWQ)
 
@@ -16,7 +17,11 @@
 pip install you-get
 you-get https://www.bilibili.com/video/BV13U4y1n7SH?spm_id_from=333.851.b_7265636f6d6d656e64.4
 ```
+#### pip install faker生产假数据
 ### 1.2 jdk  
+#### zeal在windows下使用,使用迅雷下载需要加速一下
+1. [参考连接1](https://blog.csdn.net/DickDiShuiShiChuan/article/details/112283732)
+2. [文档下载查询地址](http://api.zealdocs.org/v1/docsets)
 
 ### 1.3 常用命令行
 1. dir列出当前目录下的文件以及文件夹
@@ -2905,7 +2910,7 @@ public @interface MyAnnotation {
     }
 ```   
 #### Vector源码分析
-1. jdk7和jdk8中通过构造器创建对象时，底层都创建了长度为10的数组，在扩容方面，默认扩容为原来的两倍
+1. jdk7和jdk8中通过构造器创建对象时，底层都创建了长度为10的数组，在扩容方面，默认扩容为原来的**两倍**
 #### List接口中常用方法测试 List除了从Collection集合继承的方法外，List集合里添加了一些根据索引来操作集合元素的方法
 1. void add(int index,Object ele) 在index位置插入ele元素
 2. boolean addAll(int index,Collection eles) 从index位置开始将eles中的所有元素添加进来
@@ -3048,9 +3053,426 @@ public class InterviewTest {
 ...可能已经执行过多次put...  
 map.put(key1,value1):
    首先调用key1所在类的hashCode()计算key1的hash值，此hash值经过某种算法以后，得到在entry中存放的位置。  
-   &emsp;&emsp;如果此位置上的数据为空，此时的key1-value1存放成功    
+   &emsp;&emsp;如果此位置上的数据为空，此时的key1-value1存放成功 ---> 情况1    
    &emsp;&emsp;如果此位置上的数据不为空，(意味着此位置上存在一个或多个数据(以链表形式存在)),比较key1和已经存在的一个或多个数据的hash值    
-   &emsp;&emsp;&emsp;&emsp;如果key1的hash值与已经存在的数据的hash值都不相同，此时key1-value1添加成功。  
+   &emsp;&emsp;&emsp;&emsp;如果key1的hash值与已经存在的数据的hash值都不相同，此时key1-value1添加成功。  ---> 情况2
    &emsp;&emsp;&emsp;&emsp;如果key1的hash值与已经存在的数据(key2-value2)的hash值相同，继续比较，调用key1所在类的equals方法    
-   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;如果equals返回false，：此时key1-value1添加成功  
+   &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;如果equals返回false，：此时key1-value1添加成功  ---> 情况3
    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;如果equals返回true，：使用value1替换value2    
+2. 补充：情况2和情况3：此时key1-value1和原来的数据以链表的方式存储。
+3. 在不断的添加过程中，会涉及到扩容问题，默认的扩容方式：扩容为原来的2倍，并将原有的数据复制过来。  
+#### jdk8相较于jdk7在底层实现方面的不同：
+1. new HashMap():底层没有创建一个长度为16的数组
+2. jdk8底层的数组是：Node[],而非Entry[]
+3. 首次使用put()方法时，底层创建长度为16的数组
+4. jdk7底层结构只有：数组+链表。jdk8中底层结构：数组+链表+红黑树。  
+   当数组的某一个位置上的元素以链表形式存在的个数 > 8且当前数组的长度>64时，
+   此时此位置上的所有数据改为使用红黑树存储。
+### LinkedHashMap底层实现原理 (需要频繁地遍历操作推荐使用此方法而不选择HashMap)
+```java
+    static class Entry<K,V> extends HashMap.Node<K,V> {
+        Entry<K,V> before, after;//能够记录元素添加的先后顺序
+        Entry(int hash, K key, V value, Node<K,V> next) {
+            super(hash, key, value, next);
+        }
+    }
+```
+### map中定义的方法
+#### 增、删除、修改操作
+1. Object put(Object key,Object value) 将指定key - value添加到map中，如果存在key则是修改操作
+2. void putAll(Map m) 将一个map集合放入另一个map中
+3. Object remove(object key) 移除指定的key-value对，并返回value
+4. void clear() 清空当前map中的所有数据 与map=null操作不同，区别Collection
+#### 元素查询操作
+1. Object get(Object key) 获取指定key对应的value
+2. boolean containsKey(Object key) 是否包含指定key
+3. boolean containsValue(Object value) 是否包含指定value
+4. int size() 返回map中key-value的对数
+5. boolean isEmpty()判断当前map是否为空
+6. boolean equals(Object obj) 判断当前map和obj是否相等
+#### 遍历操作
+1. 遍历所有key Iterator iterator2 = map.keySet().iterator();
+2. 遍历所有value Iterator iterator3 = map.values().iterator();
+3. 遍历所有key value Iterator iterator = map.entrySet().iterator();
+4. 总结：增、删、改、查、长度、遍历
+### treMap两种排序方式
+1. 向TreeMap中添加Key-value,要求key必须是由同一个类型创建的对象
+2. 因为要按照key排序：自然排序，定制排序
+3. 自然排序
+### Properties:常用来处理配置文件。key-value都是String类型
+```java
+      Properties properties = new Properties();
+      FileInputStream fileInputStream = new FileInputStream("jdbc.properties");
+      properties.load(fileInputStream);
+      String name = properties.getProperty("name");
+      String password = properties.getProperty("password");
+      System.out.println("name:" + name);
+      System.out.println("password:" + password);
+```
+### Collections和Collection的区别
+1. Collections是一个操作Set、List、Map等集合的工具类
+2. Collection
+### Collection工具类常用方法
+1. reverse(List) 反转List中元素的数据
+2. shuffle(List) 对List进行随机排序
+3. sort(List) 根据元素的自然顺序对指定的List集合按升序排序
+4. sort(List, Comparator) 根据指定的Comparator产生的顺序进行排序
+5. swap(List,int i,int j)对指定List的i和j进行互换
+
+6. Object max(Collection):根据元素的自然排序，返回给定集合中最大的元素
+7. Object max(Collection,Comparator):根据给定的Comparator来排序，返回给定集合中最大的元素
+8. Object min(Collection):根据元素的自然排序，返回给定集合中最小的元素
+9. Object min(Collection,Comparator):根据给定的Comparator来排序，返回给定集合中最小的元素
+10. int frequency( Collection,Object) 返回指定集合中元素出现的次数
+11. void copy(List dest,List src) 将src中的内容复制到dest中，注意dest的大小不能小于src，最好一样大并且初始值为null
+12. boolean replace(List list,Object oldValue,Object newValue) 使用新值替换旧值
+#### Collections类中提供了多个synchronizedXxx()方法，该方法可以使指定集合包装成线程同步的集合，从而可以解决多线程并发访问集合时的线程安全问题
+```java
+      List list = new ArrayList();
+      list.add("chen");
+      list.add("wei");
+      list.add(2354);
+      List l = Collections.singletonList(list);
+```
+1. ArrayList和HashMap都是线程不安全的，如果程序要求线程安全我们可以将他们转换为线程安全的，Collections.singletonList(list);
+
+## day25泛型
+### 泛型的使用
+1. 两个例子,集合中使用泛型，注意例子二中的Iterator写法，还有Entry
+```java
+public class Practice1 {
+  public static void main(String[] args) {
+      ArrayList<Integer> integers = new ArrayList<>();
+      for (int i=0;i<100;i++){
+          integers.add((int) (Math.random()*100 + 1));
+      }
+      Iterator<Integer> i = integers.iterator();
+      while (i.hasNext()){
+            System.out.println(i.next());
+      }
+  }
+}
+```
+```java
+public class Practice2 {
+  public static void main(String[] args) {
+      Map<String,Integer> map = new HashMap<String,Integer>();
+      map.put("chenwei",23);
+      map.put("chenqing",33);
+      map.put("huangyuyao",24);
+      map.put("zhoujianping",52);
+      map.put("liwei",21);
+      //泛型的嵌套
+      Set<Map.Entry<String, Integer>> entries = map.entrySet();
+      Iterator<Map.Entry<String, Integer>> iterator = entries.iterator();
+      while (iterator.hasNext()){
+          Map.Entry<String, Integer> next = iterator.next();
+          System.out.print("key = "+next.getKey());
+          System.out.println("  value = "+next.getValue());
+      }
+  }
+}
+```
+#### jdk5.0新增 jdk7.0类型推断ArrayList<Integer> integers = new ArrayList<>();
+#### 在集合中使用泛型的总结
+1. 集合接口或集合类在jdk5.0时都修改为带泛型的结构
+2. 在实例化集合时，可以指明具体的泛型类型
+3. 指明完以后，在集合类或接口中凡是使用到定义类或接口时，内部结构(方法、构造器、属性等)使用到类的泛型时的位置，都指定为实例化时的类型
+   比如add(E e) ---> 实例化以后 add(Integer i) 
+4. 注意点：泛型额类型必须是类，不能是基本数据类型。需要用到基本数据类型的位置，使用包装类
+5. 如果实例化时没有指定类型，那么默认为Object类型
+#### 自定义泛型结构：泛型类、泛型接口
+1. 泛型类可能有多个参数，此时应将多个参数一起放在尖括号内，比如<T1,T2,T3>
+2. 泛型的构造器和普通的一样
+3. 实例化后，操作原来泛型位置的结构必须与指定的泛型类型一致
+4. 泛型不同的引用不能相互赋值
+5. 泛型如果不指定，将被擦除，泛型对应的类型均按照Object处理，但不等价于Object。经验：泛型要使用一律都用。要不用，一律都不用
+6. 如果泛型结构是一个接口或抽象类，则不可创建泛型类的对象。
+7. jdk7.0，泛型的简化操作：类型推断ArrayList<Integer> integers = new ArrayList<>();
+8. 泛型的指定中不能使用基本数据类型型，可以使用包装类替换。
+9. 在类/接口上声明的泛型，在本类或接口中即代表某种类型，可以作为非静态属性的类型、非静态方法的参数类型、
+非静态方法的返回值类型。但在静态方法中不能使用类的泛型。
+> 说明：类的泛型是造对象的时候指定的，也就是实例化的时候，而静态结构早于对象的创建
+> 相当于还没指定类型我这里就要用了，那肯定不行
+10. 异常类不能使用泛型的 
+11. 不能使用new E[] 。但是可以E[] elements = (E[])new Object[capacity]
+12. 父类有泛型，子类可以选择保留泛型也可以选择指定泛型类型
+>子类不保留父类的泛型：按需实现
+>>没有类型 擦除
+>>具体类型
+> 子类保留父类的泛型：泛型子类
+>>全部保留 
+>> 部分保留  
+结论：子类必须是“富二代”，子类处理指定或保留父类的泛型，还还可以增加自己的类型 
+#### 小知识，父类中的一个方法为静态的，子类中这个方法也必须为静态的，父类中这个方法不是静态的，子类中这个方法也不能是静态的
+#### 泛型方法的使用举例，使用在dao(database access object数据访问对象 )中的举例
+1. Dao
+```java
+public class DAO<T> {
+    //对于具体要继承的类，一继承就具体了；表的共性操作的dao
+    //增加一条数据
+    public void add(T t){
+    }
+    //删除一条数据
+    public boolean delete(int index){
+        return false;
+    }
+    //查找一条数据
+    public T getIndex(int index){
+        return null;
+    }
+    //查询多条
+    public List<T> getForList(int index){
+        return null;
+    }
+    //泛型方法，举例子获取表中一共有多少条记录，获取最大的员工入职时间
+    public <E> E getValue(){
+        return null;
+    }
+}
+```
+2. CustomerDao
+```java
+public class CustomerDao extends DAO<Customer>{
+    //这里继承了DAO，里面的增删改查就具体为Customer的增删改查了
+    //单独表的操作的dao
+}
+```
+3. test
+```java
+public class DaoTest {
+    @Test
+    public void test1(){
+        CustomerDao customerDao = new CustomerDao();
+        customerDao.delete(1);
+    }
+}
+```
+#### 1. 泛型在继承中的体现
+```java
+    @Test
+    public void test2(){
+        /*
+        * 泛型在继承方面的体现
+        * 类A是类B的父类，G<A>和G<b>二者不具备子父类关系，二者是并列关系
+        * 补充：类A是类B的父类，A<G> 是 B<G>的父类，接口也是一样的，
+        * */
+        Object o = null;
+        String str = null;
+        o=str;
+
+        List<Object> listObj = null;
+        List<String> listStr = null;
+        //编译报错，这是错误的.listObj和listStr不是子父类关系
+        //listObj = listStr
+
+    }
+```
+#### 2. 泛型中使用通配符
+```java
+    @Test
+    public void test3(){
+        /*
+        * 2. 通配符的使用
+        * 通配符 ?
+        * 类A是类B的父类，G<A>和G<b>二者没有关系，二者共同的父类是：G<?>
+        * */
+        List<Object> list= null;
+        List<String> list1 =null;
+        List<?> listf = null;
+        listf = list;
+        listf = list1;
+    }
+    public void print(List<?> list){
+        Iterator<?> iterator = list.iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+    }
+```
+#### 3. 使用通配符后数据的读取和写入要求
+1. 添加（写入）：对于List<?>就不嫩向其内部添加数据。  
+   除了添加null以外
+2. 取（读取）：允许读取操作，去读的数据类型为Object  
+#### 4. 有条件限制的通配符的使用 通配符中使用继承
+```java
+public class DaoTest {
+    @Test
+    public void test1(){
+        CustomerDao customerDao = new CustomerDao();
+        customerDao.delete(1);
+    }
+    @Test
+    public void test2(){
+        /*
+        * 1. 泛型在继承方面的体现
+        * 类A是类B的父类，G<A>和G<b>二者不具备子父类关系，二者是并列关系
+        * 补充：类A是类B的父类，A<G> 是 B<G>的父类，接口也是一样的，
+        * */
+        Object o = null;
+        String str = null;
+        o=str;
+        List<Object> listObj = null;
+        List<String> listStr = null;
+        //编译报错，这是错误的.listObj和listStr不是子父类关系
+        //listObj = listStr
+    }
+    @Test
+    public void test3(){
+        /*
+        * 2. 通配符的使用
+        * 通配符 ?
+        * 类A是类B的父类，G<A>和G<b>二者没有关系，二者共同的父类是：G<?>
+        * */
+        List<Object> list= null;
+        List<String> list1 =null;
+        List<?> listf = null;
+        listf = list;
+        listf = list1;
+        /*
+        * 添加（写入）：对于List<?>就不嫩向其内部添加数据。
+        * 除了添加null以外
+        *
+        * 获取（读取）：允许读取操作，返回类型为Object
+        * */
+    }
+    public void print(List<?> list){
+        Iterator<?> iterator = list.iterator();
+        while (iterator.hasNext()){
+            System.out.println(iterator.next());
+        }
+    }
+    @Test
+    public void test4(){
+        /*
+        * 有条件限制的通配符的使用。
+        *  ? extends A:理解为小于等于。
+        *               <?  extends A>可以作为G<A>和G<B>的父类，其中B是A的子类。
+        *  ? super A:理解为大于等于。
+        *               <?  super A>可以作为G<A>和G<B>的父类，其中B是A的父类。
+        * */
+        List<? extends Person> list1 = null;
+        List<? super Person> list2 = null;
+        ArrayList<Customer> list3 = new ArrayList<>();
+        ArrayList<Person> list4 = new ArrayList<>();
+        ArrayList<Object> list5 = new ArrayList<>();
+        list1 = list3;
+        list1 = list4;
+        //list1 = list5;
+        //list2=list3;
+        list2=list4;
+        list2=list5;
+        //读取数据
+        list1 = list4;
+        Person person = list1.get(0);
+        //Customer customer = list1.get(0);错误编译不过，多态的理解
+        list2=list4;
+        //这里接收只能写Object接收
+        Object object = list2.get(0);
+        //写入数据小于等于的extends不可以，大于等于的super可以 子类可以赋给父类，父类不能赋给子类，就看？表示的范围
+        //list1.add(new Customer())错误，这里？表示的比Customer类还小的话就是错误的
+        //对于super可以
+        boolean add = list2.add(new Person());
+        boolean add1 = list2.add(new Customer());
+    }
+}
+```
+## day25 io流
+### 主体结构/目录
+1. File类的使用
+2. IO流原理及流的分类
+3. 节点流(或文件流)
+4. 缓冲流
+5. 转换流
+6. 标准输入、输出流
+7. 打印流
+8. 数据流
+9. 对象流
+10. 随机存储文件流
+11. NIO.2中Path、Paths、File类的使用
+### File类的使用
+1. File类的一个对象，代表一个文件或一个文件目录（俗称文件夹）
+2. File类声明在java.io包下
+3. File类中涉及到关于文件或文件目录的创建、删除、重命名、修改时间、文件大小等方法，并未涉及文件写入或读取的操作。如果需要读取或写入文件内容，必须使用IO流来完成
+4. 后续FiLe的对象常会作为参数传递到流的构造器中，指明读取写入的终点
+#### 1. File类的使用
+1.File(String FilePah)
+2.File(String parentPath,String child)
+3.File(File parentPath,String child)
+```java
+/**
+ * @author: chenwei
+ * @date: 2021/9/4 18:22
+ * @description: File类的使用
+ * 1. File类的一个对象，代表一个文件或一个文件目录（俗称文件夹）
+ * 2. File类声明在java.io包下
+ *
+ * 路径分隔符和操作系统有关：
+ * Windows和dos系统默认使用“\”来表示
+ * UNIX和URL使用"/"来表示
+ */
+public class FileTest {
+    /*
+    * 如何创建File类的实例
+    * 1.File(String FilePah)
+    * 2.File(String parentPath,String child)
+    * 3.File(File parentPath,String child)
+    * */
+    @Test
+    public void test1(){
+        //构造器1
+        File file1 = new File("helleFile.txt");
+        File file2 = new File("D:\\workspace\\TwoWeeksLearnJava\\src\\day25generic\\helleFile.txt");
+        System.out.println(file1);
+        System.out.println(file2);
+        //构造器2
+        File file3 = new File("D:\\workspace\\TwoWeeksLearnJava","src\\day25generic");
+        System.out.println(file3);
+        //构造器3
+        File file4 = new File(file3,"helloFile.txt");
+        System.out.println(file4);
+    }
+}
+```
+#### 2. File类的常用方法
+1. file1.getAbsolutePath()
+2. file1.getPath() 这里表示的是构造器那里的文件名，写的绝对路径就是绝对路径名，相对路径名称就是相对相对路径的名
+3. file1.getName()
+4. file1.getParent()
+5. file1.length()
+6. file1.lastModified()
+7. File file1 = new File("helloFile.txt");
+8. File file1 = new File("helloFile.txt");
+9. String[] list = file3.list();关于文件路径的方法
+10. File[] files = file3.listFiles();关于文件路径的方法
+11. boolean b = file1.renameTo(file2);在我看来就是把一个文件剪切到另外一个位置了吧
+    把文件命名到指定的文件路径  
+    要想保证返回TRUE，需要file1在硬盘中存在file2在硬盘中不存在
+```java
+        File file1 = new File("helloFile.txt");
+        File file2 = new File("D:\\io\\hedllFiles.txt");
+        boolean b = file1.renameTo(file2);
+```
+#### 3. File类的常用方法
+1. boolean isDirectory() 判断是否是文件目录
+2. boolean isFile() 判断是否是文件
+3. boolean exists() 判断是否存在 
+4. boolean canWrite() 判断是否可写
+5. boolean canRead() 判断是否可读
+6. boolean isHidden() 判断是否隐藏
+#### 4. File类中的常用方法 如果创建文件目录的上层目录不存在，就使用mkdirs()
+1. boolean createNewFile() 创建文件。若文件存在，则不创建，返回false;
+2. boolean mkdir() 创建文件目录。若文件目录存在，就不创建，若此文件目录的上层不存在，也不创建；
+3. boolean mkdirs() 创建文件目录。如果上层文件目录不存在，一并创建；
+## day26 io流
+### 一、流的分类
+1. 操作数据单位，字节流字符流
+2. 数据的流向:输入流、输出流
+3. 流的角色:节点流、处理流
+### 二、流的体系结构
+|抽象基类|节点流(或文件流)|缓冲流(处理流的一种)
+| ---- | ---- | ---- |
+| InputStream | FileInputStream | BufferedInputStream |
+|InputStream|FileInputStream|BufferedInputStream|
+|Reader|FileReader|BufferedReader|
+|Writer|FileWriter|BufferedWriter|
