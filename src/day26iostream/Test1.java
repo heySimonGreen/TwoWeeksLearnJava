@@ -1,11 +1,7 @@
 package day26iostream;
-
-import LearnCode20210628.day210629.CodeExecutionProcess.TestStatic;
 import org.junit.Test;
-
 import java.io.*;
 import java.time.LocalDateTime;
-
 /**
  * @author: chenwei
  * @date: 2021/9/7 1:23
@@ -29,8 +25,6 @@ public class Test1 {
     2. 异常的处理：为了保证流资源一定可以执行关闭操作。需要使用tyr-catch-finally处理
     3. 读的文件一定要要存在，否则会报FileNotFound异常
     */
-
-
     @Test
     public void test1() throws IOException {
         //1. 实例化file类的对象，指明要操作的文件
@@ -186,7 +180,6 @@ public class Test1 {
         */
         File srcFile = new File("filetest/test1/childFolder4/pic.jpeg");
         File desFile = new File("filetest/test1/childFolder4/pic2.jpeg");
-
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
         try {
