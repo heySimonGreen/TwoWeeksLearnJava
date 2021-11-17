@@ -66,8 +66,8 @@ the dynamic link library pbdwo125.dll could not be found in the specified path�
 
 ### 任务：
 
-1. 学习PB,看ftp上的视频，争取今天将初级看完
-2. 继续看医疗培训业务ppt，病人在院诊疗图，自己要能自己讲出来。
+1. 学习PB,看ftp上的视频，争取今天将初级看完。**结果**：今天看了10个。视频有点多。。。
+2. 继续看医疗培训业务ppt，病人在院诊疗图，自己要能自己讲出来。**结果**：流程基本完成。但是学习要求中了解病人在院门诊部分就诊和住院部分治疗整个过程会出现一些异常情况和处理；把握医疗工作、费用产生、物流信息它们之间的接口信息方式，**需要将pb学习完成运行项目实际操作**。
 
 **病人在院诊疗图学习的要求：**
 
@@ -101,7 +101,7 @@ E:\Symedsoft\PB12\Shared\PowerBuilder。昨天报错的pbdwo125.dll找不到，�
 
 Workspace(pbw)、target(pbt)	、PBL、Application(可以有多个application，但只有一个起点窗口)、Window。所以拷贝项目的时候pbw、pbt、pbl这三个文件都要拷贝上。 
 
-### 函数：
+### 函数：shift+F1查看函数使用帮助文档
 
 MessageBox()、Open()、SetNull()
 
@@ -114,6 +114,10 @@ Left()函数：作用：得到指定字符串左侧若干个字符。语法：Le
 Right()函数：作用：得到指定字符串左侧若干个字符。语法：Left(str1,len)。返回值string
 
 Mid()函数：作用：得到指定字符串左侧若干个字符。语法：Left(str1,len)。返回值string
+
+Asc():作用：得到对应的ASCII;语法ASC(char);返回值：数字，对应的ASCII
+
+Char():作用：得到和ASCII对应的字符;语法Char(char);返回值：字符
 
 ### 查看帮助文档：
 
@@ -317,7 +321,7 @@ choose case 注意顺序性。
 
 问题2 下面代码变量中的时间显示的是00:00:00，关键是前面运行的时候都没错，显示的是编译的时间，加了注释就编程0了？
 
-解决：不知道怎么又没错了，显示了编译的时间。。。点击application的编译后时间没哟变。如果没有修改代码，点击编译也是编译上次编译后的代码，所以时间还是第一次编译的时间。
+解决：不知道怎么又没错了，显示了编译的时间。。。点击application的编译后时间没哟变。如果没有修改代码，点击编译也是编译上次编译后的代码，所以时间还是第一次编译的时间。需要修改代码后再编译。
 
 ```
 Time lt_Now = Now()	
@@ -330,7 +334,7 @@ MessageBox(string(lt_Now),string(Now()) + '时间')
 
 练习程序，视频10，使用函数、循环完成字符串截取操作
 
-```pb
+```pascal
 Integer li_pos1			//第一个指针
 Integer li_pos2  		//第二个指针
 String ls_content  		//用户输入的内容
@@ -340,23 +344,224 @@ String ls_temp			//当前的单词
 ls_content = sle_1.text
 ls_split = sle_2.text
 //异常，输入内容判断，
-if ls_content ='' then return
-if ls_split ='' then return
+if ls_content ='' then
+	MessageBox('提示','ls_content is empty')
+	return
+end if
+if ls_split ='' then
+	MessageBox('提示','ls_split is empty')
+	return
+end if
 
-if Left(ls_content,1) <> '/' then ls_content = '/' + ls_content
-if Right(ls_content,1) <> '/' then  ls_content = ls_content + '/'
+/*Left从字符串开头获取指定数目的字符串*/
+if Left(ls_content,1) <> ls_split then ls_content = ls_split + ls_content
+if Right(ls_content,1) <> ls_split then  ls_content = ls_content + ls_split
 
 //MessageBox('提示',ls_content)
 
-li_pos1 = Pos(ls_content,'/')
-li_pos2 = Pos(ls_content,'/',li_pos1+1)
-//循环，当li_pos不等于0执行，为0就代表找不到最后一个/，结束了。
+li_pos1 = Pos(ls_content,ls_split)
+li_pos2 = Pos(ls_content,ls_split,li_pos1+1)
+
 do while li_pos2 <> 0
 	ls_temp = Mid(ls_content,li_pos1 + 1,li_pos2 - li_pos1 - 1)
 	MessageBox('提示',ls_temp)
 	li_pos1 = li_pos2
-	li_pos2 = Pos(ls_content,'/',li_pos1+1)
+	li_pos2 = Pos(ls_content,ls_split,li_pos1+1)
 loop
 ```
 
 明天开始视频11学习
+
+## 11月17日
+
+### 一、任务：
+
+1. 产品结构图的理解和学习，结合病人在院诊疗图，这三条线贯穿其中。
+2. 继续学习pb12
+3. 自己制作一个冒泡排序的例子。
+
+### 二、产品结构图：
+
+### 三、三条主线：
+
+电子病历/病人信息、费用信息、物流信息。
+
+#### 1 电子病历
+
+（身份登记、门诊医生站、住院登记、护士工作站、医生工作站、检查/检验/手术/血库）
+
+#### 2 费用信息
+
+（门诊收费、护士工作站、后台划价、药品/检查/检验/手术、住院收费）
+
+#### 3 物流信息
+
+（临床药房、门诊药房、药库管理、器械库管理、高/低消耗品管理）
+
+### 四、PB12。
+
+视频11开始
+
+ctrl + h 替换快捷键
+
+昨天程序改进，更加灵活。
+
+```pascal
+Integer li_pos1			//第一个指针
+Integer li_pos2  		//第二个指针
+String ls_content  		//用户输入的内容
+String ls_split			//分隔符
+String ls_temp			//当前的单词
+
+ls_content = sle_1.text
+ls_split = sle_2.text
+//异常，输入内容判断，
+if ls_content ='' then
+	MessageBox('提示','ls_content is empty')
+	return
+end if
+if ls_split ='' then
+	MessageBox('提示','ls_split is empty')
+	return
+end if
+
+/*Left从字符串开头获取指定数目的字符串*/
+if Left(ls_content,Len(ls_split)) <> ls_split then ls_content = ls_split + ls_content
+if Right(ls_content,Len(ls_split)) <> ls_split then  ls_content = ls_content + ls_split
+
+//MessageBox('提示',ls_content)
+
+li_pos1 = Pos(ls_content,ls_split)
+li_pos2 = Pos(ls_content,ls_split,li_pos1+Len(ls_split))
+
+do while li_pos2 <> 0
+	ls_temp = Mid(ls_content,li_pos1 + Len(ls_split),li_pos2 - li_pos1 - Len(ls_split))
+	MessageBox('提示',ls_temp)
+	li_pos1 = li_pos2
+	li_pos2 = Pos(ls_content,ls_split,li_pos1+Len(ls_split))
+loop
+
+```
+
+![循环语句2](I:\Symedsoft\研发部\循环语句2.PNG)
+
+静态文本控件、单行输入框控件
+
+#### 视频11 练习程序
+
+##### 1 编写加密解密程序
+
+加密
+
+```pascal
+String ls_text	//输入的文本框
+String ls_temp	// 每个位置的数据
+String ls_encodeText	// 接收加密后的数据
+String ls_seed	//种子，加密解密的秘钥
+Integer li_index		//记录循环的次数，每次的数据放在temp中，加密后在放入ls_encodeText
+
+ls_text = sle_1.text	//接收输入的数据
+//判断接收的数据是否为空
+if ls_text = '' then
+	MessageBox('提示','输入内容为空')
+	return
+end if
+//将ls_seed的长度填充到和输入字符的长度一样，方便操作
+ls_seed = '4242424124243464575688'
+ls_seed = Fill(ls_seed,Len(ls_text))
+
+
+//循环将ls_content的内容的asc码和ls_seed对应位置的数据相加，得到的数字转换为字符。实现加密
+for li_index = 1 to Len(ls_text)
+	ls_temp = Mid(ls_text,li_index,1)
+	ls_temp = Char(Asc(ls_temp) + Integer(Mid(ls_seed,li_index,1)))
+	ls_encodeText = ls_encodeText + ls_temp 
+next	
+	
+//赋值，显示
+st_2.text = ls_encodeText
+sle_2.text = ls_encodeText
+```
+
+解密 类似加密
+
+```pascal
+String ls_content
+String ls_temp
+String ls_value
+String ls_seed = '4242424124243464575688'
+Integer li_index
+
+ls_content = sle_1.text
+if ls_content = '' then
+	MessageBox('提示','content is empty')
+	return
+end if
+
+ls_seed = Fill(ls_seed,Len(ls_content))
+
+for li_index = 1 to Len(ls_content)
+	ls_temp = Char(Asc(Mid(ls_content,li_index,1)) - Integer(Mid(ls_seed,li_index,1)))
+	ls_value = ls_value + ls_temp
+Next
+
+st_4.text = ls_value
+sle_3.text = ls_value
+```
+
+
+
+
+
+##### 2 打印99乘法表
+
+~t 代表一个制表位
+
+~r~n 代表一个换行符
+
+多行编辑器控件：multilineedit
+
+```pascal
+String ls_value
+Integer li_for1
+Integer li_for2
+
+for li_for1 = 1 to 9
+	for li_for2 = 1 to li_for1
+		ls_value = ls_value + String(li_for2) + ' * ' + String(li_for1) + '=' + String(li_for1*li_for2) +  '~t'
+	Next
+	ls_value = ls_value + '~r~n'
+Next 
+
+mle_1.text = ls_value
+
+```
+
+在字符串拼接的时候拼接等号时有问题，乘法表对齐没有对齐。拼接的时候最好不要用空格吧。‘=’ 不要' = '
+
+```
+ String(li_for1) + '=' + String(li_for1*li_for2)
+```
+
+
+
+3 ABCDE * A	= EEEEEE
+
+##### 数据库连接问题：导入数据库失败
+
+E:\oracle\product\10.2.0\db_1\network\ADMIN 杨老师发了一个文件，替换掉tnsnames.ora。还发了一个数据库工具
+
+运行项目后 按s 查看数据库
+
+pb12用管理员方式运行
+
+
+
+下面的代码注释后可以进入系统。但数据为导入
+
+```pascal
+//IF f_gen_input_file(appinfo.sys_name, appinfo.input_cfg,ls_input) < 0 THEN
+//   messagebox("提示", "更新输入法词库文件时出现了错误！")
+//END IF
+```
+
