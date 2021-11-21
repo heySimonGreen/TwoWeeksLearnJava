@@ -2,7 +2,7 @@
 
 检索词：
 
-问题；控件；函数；
+问题；控件；函数；启动项目
 
 
 
@@ -716,7 +716,7 @@ select * from pats_in_hospital
 
 
 
-关于游标：
+### 关于游标：
 
 可以使用SQL返回多条数据，并逐条处理。
 
@@ -869,14 +869,350 @@ http://localhost:8090/self/swagger-ui.html
 
 ORA-01017:invalid username/password;logon denied
 
-11月19日
+## 11月19日
 
-任务：
+### 任务：
 
-1 pb学习
+1 pb学习。上午
 
-2 培训资料医疗业务
+2 培训资料医疗业务。上午
 
-[电脑自启动项目的修改](https://www.cnblogs.com/clovershell/p/10109143.html)
+3 查看学习 tn_self_service 项目代码
+
+### 问题
+
+1 [电脑自启动项目的修改](https://www.cnblogs.com/clovershell/p/10109143.html)
 
 Win+R 后输入： shell:startup
+
+2 学习虽然每天早上做了任务，但具体任务事件分配没有分配好，想到哪个做哪个。需要将时间分配好
+
+3 oracle数据的使用
+
+```
+orapwd file=E:\oracle\product\10.2.0\db_1\database\pwdorcl.ora password=chenwei1234 entries=10;
+PWDorcl.ora
+sys/chenwei1234 as sysdba
+用户名：sys
+口令：chenwei1234
+数据库：ORCL
+连接为：sysdba
+```
+
+创建用户chenwei、simon都报错 用户名与另外一个用户名或角色名发生冲突
+
+![oracle报错：创建用户-角色冲突](I:\Symedsoft\研发部\oracle报错：创建用户-角色冲突.PNG)
+
+[oracle数据库基本操作](https://www.cnblogs.com/fighter007/p/8269238.html)
+
+```
+create  user chenwe12i identified by chenwei;//创建用户
+
+alter user chenwe12i identified by chenwei1234;//更改用户密码
+
+grant connect ,resource,dba to chenwe12i;授权用户，不授权会报错 logon denied
+
+加锁：  alter  user laolu account lock;
+解锁：  alter  user laolu  account unlock;
+
+drop user username //删除用户
+```
+
+
+
+[oracle数据库字段类型说明](https://www.cnblogs.com/kliine/p/10018607.html)
+
+创建的表在哪儿查看：plsql developer 左边下面对象 tables的文件夹可以看到创建的数据库
+
+```
+insert into test('name','id') values('chenwei',1);
+```
+
+登录LP服务器数据库提示：12638 身份证明检索失败：
+
+解决：开始 ——> Net Manager ——>
+
+问题：
+
+Please使用pb连接自己创建的数据库报错，但连接项目的LP数据库就没有错。
+
+ connnect as the powerbuilder catalog owner.this is necessary for the initial connection to the oracle to grant privileges on the repository 
+
+[解决](https://blog.csdn.net/cuizatu9720/article/details/100406412)
+
+
+
+ORACLE ODBC driver configuration 提示 An unsupported operation was attempted
+
+解决：这个困扰比较久，但关闭那个提示框过后就显示出连接数据库，就成功，很玄。。。不管这个报错自己就好了。
+
+### pb连接数据库：
+
+```pascal
+String ls_name
+
+// Profile oracle_chenwe12i
+SQLCA.DBMS = "O10 Oracle10g (10.1.0)"
+SQLCA.LogPass = "chenwei1234"
+SQLCA.ServerName = "ORCL"
+SQLCA.LogId = "chenwe12i"
+SQLCA.AutoCommit = False
+SQLCA.DBParm = "PBCatalogOwner='chenwe12i'"
+connect;//这里一定要写，不然执行sql时报错
+
+
+If SQLCA.SQLcode = 0 Then
+	open(w_connectdatabase)
+	MessageBox('sqlcode',string(sqlca.sqlcode) + "连接成功")
+	else
+		MessageBox('sqlcode',sqlca.sqlcode)
+		MessageBox('提示','报错信息：' + sqlca.SQLErrText)
+end if
+```
+
+在pb中使用sql查询数据，一次最多只能一条。
+
+```pascal
+String ls_name
+
+select name into :ls_name from test where id = 110;//一定要记得加分号，很容易忘
+MessageBox(String(sqlca.sqlcode),ls_name)
+//sqlca.code 0 表示成功，100表示没有找到数据，-1表示执行失败，返回数据时多条
+```
+
+### 关于游标：续昨天
+
+```pascal
+String ls_name;
+
+//声明游标
+Declare Cursor_Name Cursor for
+	select name from test;
+	
+//打开游标
+Open Cursor_Name;
+//读取第一条数据
+Fetch Cursor_Name into :ls_name;
+
+Do while sqlca.sqlcode = 0
+	MessageBox('提示',ls_name)
+	Fetch Cursor_Name into :ls_name;
+Loop
+
+//关闭游标
+Close Cursor_Name;
+
+```
+
+### 查看所有打开的窗口：
+
+window 界面最下面可以看到所有打开的界面
+
+### 视频16
+
+一个函数编写应有一下信息。
+
+```
+函数定义：String gf_add(Integer ai_add1, Integer ai_ai_add2)
+函数作用：做加法运算
+参数解释：ai_add1：被加数，ai_ai_add2：加数
+返回值：String类型，两数相加后的和
+调用举例：li_temp = gf_add(10,33)
+编写日期：2021.11.19
+编写人：陈伟
+改动情况：改动日期、改动人、改动原因、改动描述
+```
+
+### 编写函数之前：
+
+什么功能需要函数来实现。
+
+接口规划：返回值、哪些参数、参数类型、函数名称
+
+文档书写：函数前面的位置。
+
+代码编写：异常判断、变量初值、正常编程
+
+调用函数
+
+
+
+### 新建函数：
+
+new ——>PB Object ——> Function
+
+函数命名gf_函数名称。 eg: gf_code
+
+参数名称名称：a+参数类型_参数名称。eg:as_content
+
+Pass By：传递类型。可以选择值传递还是地址传值。value:传过去的是复制一份的值，修改后不会影响原程序的值。不会影响调用的那一方。
+
+reference:地址传递，修改过后，原位置的数据也会被修改。会影响调用的那一方。readonly：只能读，不能进行修改操作
+
+```
+String as_contect	//输入的文本框
+String ls_temp	// 每个位置的数据
+String ls_encodeText	// 接收加密后的数据
+String ls_seed	//种子，加密解密的秘钥
+Integer li_index		//记录循环的次数，每次的数据放在temp中，加密后在放入ls_encodeText
+
+if as_content = '' then return ''
+
+as_contect = sle_1.text	//接收输入的数据
+//判断接收的数据是否为空
+if as_contect = '' then
+	MessageBox('提示','输入内容为空')
+	return
+end if
+//将ls_seed的长度填充到和输入字符的长度一样，方便操作
+ls_seed = '4242424124243464575688'
+ls_seed = Fill(ls_seed,Len(as_contect))
+
+
+//循环将ls_content的内容的asc码和ls_seed对应位置的数据相加，得到的数字转换为字符。实现加密
+for li_index = 1 to Len(as_contect)
+	ls_temp = Mid(as_contect,li_index,1)
+	ls_temp = Char(Asc(ls_temp) + Integer(Mid(ls_seed,li_index,1)))
+	ls_encodeText = ls_encodeText + ls_temp 
+next	
+return ''
+	
+```
+
+编写函数的时候报错，保存后一直响，但就是看不到哪里错，因为第一次使用编辑函数，所以报错信息在这个框的最下面，没有显示出来，需要自己拉一下，找了好几分钟。。。
+
+### [常用函数,这里面很全。](http://blog.sina.com.cn/s/blog_4b0a468401012kqg.html)
+
+## 11月20日
+
+### window对象公用属性，后不再赘述
+
+可视对象的公用属性
+
+visible:是否可见，设置为false则不可见
+
+enabled:是否可用，设置为false则变为灰色
+
+X：控件左上角在横向的位置
+
+Y：控件右上角在横向的位置
+
+weight:控件宽度
+
+height:控件高度
+
+### window对象常用属性(结合窗口外观)
+
+如果需要查看所有的window属性，查看帮助文档f1，输入window conrtrol。即可看到它的所有properties属性。
+
+Title:窗口的标题文字
+
+MenuName:窗口顶部菜单，MDI必需的
+
+WindowType:窗口的类型
+
+WindowState:窗口打开时的初始状态
+
+ControlMenu:是否有控制菜单
+
+MaxBox：是否有右上角的最大化
+
+MinBox：是否有右上角的最小化
+
+TitleBar：窗口的标题栏
+
+窗口类型：
+
+Main:整个应用中一般只有一个，主窗口
+
+child：不可独立存在的，显示范围限于主窗口
+
+popup：与response不同之处是可以去操作其他的窗口
+
+response：再产生一个窗口，并打开这个窗口，不能再操作上一个窗口，需要操作必须关闭这个response窗口。资源独占式
+
+MDI
+
+MDI with help
+
+自定义事件命名：ue__+描述词  u-->user e-->event
+
+窗口空白处右键，进入编写程序。再new event。不希望鼠标右键触发，而是一开始就触发那些比较耗时的事。最下面--映射消息不选任何消息，也就是选择none。也就是event id选择none。
+
+再在Open事件写触发事件。我们在创建一个空白窗口或者按钮等事件上右键编程script时，默认时在open事件上编程的。触发函数使用This.postevent（事件名）
+
+事件名需要引号
+
+This.postevent('ue_postopen')
+
+```
+MessageBox('heihei','xian')
+//This.postevent('ue_postopen')
+This.triggerevent( 'ue_postopen')
+这两种触发方式不同之处在于是先打开窗口还是先执行事件triggerevent（先执行事件）postevent（先打开窗口，似乎是同时的。）
+```
+
+没有映射任何消息 ----> 也就是不会被任何动作触发，只能由函数出发它 ----> 只能使用postevent触发
+
+### window事件常用事件1
+
+#### Open事件
+
+触发时机：窗口打开时触发，界面尚未显示出来。
+
+常用编程：初始化工作。
+
+忌用编程：耗时的程序不要在此编写。
+
+思考：如何在窗口刚打开的时候编写耗时的程序？（见上面，使用自定义事件）
+
+#### 自定义事件：
+
+解决Open事件中不能编写耗时程序。
+
+触发的事件：PostEvent()和TriggerEvent()
+
+#### Close()事件
+
+触发时机：窗口关闭时触发，界面已经小时。所以在这个事件中一般不编写对界面操作的代码。
+
+常用编程：释放对象型变量，保存工作环境。
+
+关闭按钮就是关闭窗口，其他事情一概不做。在close事件中常用来释放一些系统对象类型的变量，保存工作环境。
+
+#### CloseQuery事件
+
+触发时机：窗口关闭之前触发。
+
+常用编程：关闭确认。
+
+忌用编程：耗时的程序不要在此编写。
+
+返回值：0-运行关闭，1-不允许关闭。
+
+#### Resize
+
+触发时机：窗口大小改变时。
+
+常用编程：动态调整窗口中控件的布局。
+
+事件参数：NewWidth、NewHeight
+
+编程要点：坐标起点，主控件，逐个参照编写。
+
+补充：能够适应不同分辨率的整体解决方案。
+
+timer
+
+触发时机：每隔指定的秒数后自动触发。
+
+Timer函数：设定时间间隔
+
+常用编程：处理周期性事件
+
+编程注意点:执行用时不能接近间隔时间，更不能大于间隔时间。
+
+![window对象-上机1](I:\Symedsoft\研发部\window对象-上机1.PNG)
+
+视频18
+
